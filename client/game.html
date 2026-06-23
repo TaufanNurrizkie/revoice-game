@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RE:VOICE — Game</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <div id="stage">
+    <div id="hud">
+      <div class="hud-pill"><span>&#10084;&#65039;</span><span id="hud-heart-val">3</span></div>
+      <div class="hud-pill"><span>&#11088;</span><span id="hud-star-val">0</span></div>
+      <div class="hud-pill"><span>&#9201;&#65039;</span><span id="hud-timer-val">0</span>s</div>
+      <div class="hud-pill"><span>&#127919;</span>Babak <span id="hud-babak">1</span></div>
+    </div>
+
+    <div id="babak2-question" style="display: none; background: #2a4135; color: #f0c468; padding: 10px; text-align: center; font-weight: bold; font-size: 14px; border: 2px solid #3a5a45; border-radius: 8px; margin-bottom: 8px;"></div>
+    <canvas id="game" width="462" height="418"></canvas>
+
+    <div id="banner-status">Bersiap...</div>
+    <button id="btn-submit" disabled>Submit Kata di Lubang Ini</button>
+  </div>
+
+  <div id="popup-transition" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; flex-direction: column; align-items: center; justify-content: center; color: white;">
+    <h2 style="color: #8fd93f; margin-bottom: 10px;">Babak Selesai!</h2>
+    <p>Hebat! Anda telah menyelesaikan babak ini.</p>
+    <button id="btn-lanjut" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; font-weight: bold; background: #e08a3c; color: #1c2b24; border: none; border-radius: 8px; cursor: pointer;">Lanjut ke Babak Berikutnya</button>
+  </div>
+
+  <div id="controls-hint">
+    Gerak: <span class="key">↑</span><span class="key">↓</span><span class="key">←</span><span class="key">→</span> /
+    WASD &middot;
+    Submit: <span class="key">Spasi</span> / tombol di bawah
+  </div>
+
+  <script src="js/maze.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/hud.js"></script>
+  <script src="js/babak1.js"></script>
+  <script src="js/babak2.js"></script>
+  <script src="js/babak3.js"></script>
+  <script src="js/socket-client.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

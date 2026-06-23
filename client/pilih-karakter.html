@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RE:VOICE — Pilih Karakter</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="form-wrap" style="max-width:420px;">
+        <div class="eyebrow">RE:VOICE</div>
+        <h1>Pilih Karaktermu</h1>
+        <p class="subtitle">Karakter ini yang akan kamu mainkan di dalam labirin.</p>
+
+        <div id="character-grid" class="character-grid"></div>
+
+        <button id="btn-lanjut" disabled>Mulai Bermain</button>
+    </div>
+
+    <script src="js/characters.js"></script>
+    <script>
+        (function () {
+            // Kalau belum isi identitas, balik ke halaman awal
+            if (!sessionStorage.getItem('revoice_sessionId')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const grid = document.getElementById('character-grid');
+            const lanjutBtn = document.getElementById('btn-lanjut');
+            let selectedId = null;
+
+            window.CHARACTERS.forEach(function (char) {
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                card.innerHTML =
+                    '<div class="character-thumb-wrap"><canvas class="character-thumb" width="64" height="64"></canvas></div>' +
+                    '<div class="character-name">' + char.nama + '</div>';
+
+                card.addEventListener('click', function () {
+                    document.querySelectorAll('.character-card').forEach(function (c) { c.classList.remove('selected'); });
+                    card.classList.add('selected');
+                    selectedId = char.id;
+                    lanjutBtn.disabled = false;
+                });
+
+                grid.appendChild(card);
+
+                // gambar thumbnail pose idle (frame col=0,row=0 dari sprite sheet)
+                const canvas = card.querySelector('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = function () {
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(img, 0, 0, 64, 64, 0, 0, 64, 64);
+                };
+                img.src = char.sprite;
+            });
+
+            lanjutBtn.addEventListener('click', function () {
+                if (!selectedId) return;
+                sessionStorage.setItem('revoice_characterId', selectedId);
+                window.location.href = 'game.html';
+            });
+        })();
+    </script>
+</body>
+
+</html>
