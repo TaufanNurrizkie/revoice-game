@@ -20,6 +20,118 @@
 window.Babak1 = (function () {
   const TILE = window.Maze.TILE;
 
+  function drawFruit(ctx, x, y, size, type) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // Draw brown stem
+    ctx.strokeStyle = "#5a3a22";
+    ctx.lineWidth = size * 0.12;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 0.25);
+    ctx.quadraticCurveTo(size * 0.1, -size * 0.5, size * 0.18, -size * 0.45);
+    ctx.stroke();
+    
+    // Draw green leaf
+    ctx.fillStyle = "#417a4c";
+    ctx.beginPath();
+    ctx.ellipse(size * 0.15, -size * 0.4, size * 0.16, size * 0.08, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    if (type === "orange") {
+      // Draw warm orange apple/fruit (Babak 1)
+      ctx.fillStyle = "#e76f51"; // cute warm orange-red apple
+      ctx.beginPath();
+      ctx.arc(-size * 0.15, 0, size * 0.38, 0, Math.PI * 2);
+      ctx.arc(size * 0.15, 0, size * 0.38, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Bottom brown notch
+      ctx.fillStyle = "#5a3a22";
+      ctx.beginPath();
+      ctx.arc(0, size * 0.34, size * 0.06, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Draw cool teal magic forest berry (Babak 2)
+      ctx.fillStyle = "#2a9d8f"; // soft teal magic berry
+      ctx.beginPath();
+      ctx.arc(-size * 0.14, -size * 0.1, size * 0.32, 0, Math.PI * 2);
+      ctx.arc(size * 0.14, -size * 0.1, size * 0.32, 0, Math.PI * 2);
+      ctx.arc(0, size * 0.16, size * 0.32, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Bottom notch
+      ctx.fillStyle = "#1b4d45";
+      ctx.beginPath();
+      ctx.arc(0, size * 0.34, size * 0.06, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Glossy highlight
+    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.12, -size * 0.15, size * 0.12, size * 0.06, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+
+  function drawBasket(ctx, px, py, isCurrentZona, glowColor) {
+    // Ground shadow / aura glow
+    const glowRadius = TILE * 0.8 + Math.sin(performance.now() / 100) * 1.5;
+    const grad = ctx.createRadialGradient(px, py + TILE * 0.15, 2, px, py + TILE * 0.15, glowRadius);
+    grad.addColorStop(0, isCurrentZona ? glowColor : "rgba(255, 255, 255, 0.15)");
+    grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py + TILE * 0.15, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(px, py + TILE * 0.05);
+    
+    // Woven Basket Base
+    ctx.fillStyle = "#8a6642"; // light wood/wicker brown
+    ctx.beginPath();
+    ctx.moveTo(-9, -2);
+    ctx.lineTo(9, -2);
+    ctx.lineTo(6, 7);
+    ctx.lineTo(-6, 7);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Basket rim (top border)
+    ctx.fillStyle = "#6e4e2f"; // darker brown
+    ctx.fillRect(-10, -5, 20, 3);
+    
+    // Woven pattern lines
+    ctx.strokeStyle = "#4a3320";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    // Vertical ribs
+    ctx.moveTo(-6, -2); ctx.lineTo(-4, 7);
+    ctx.moveTo(-2, -2); ctx.lineTo(-1, 7);
+    ctx.moveTo(2, -2);  ctx.lineTo(1, 7);
+    ctx.moveTo(6, -2);  ctx.lineTo(4, 7);
+    // Horizontal rings
+    ctx.moveTo(-8, 1);  ctx.lineTo(8, 1);
+    ctx.moveTo(-7, 4);  ctx.lineTo(7, 4);
+    ctx.stroke();
+
+    // Draw some straw/green leaves inside the basket
+    ctx.fillStyle = "#417a4c";
+    ctx.beginPath();
+    ctx.ellipse(-3, -6, 4, 2, -Math.PI/6, 0, Math.PI*2);
+    ctx.ellipse(4, -6, 4, 2, Math.PI/6, 0, Math.PI*2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+
+  const orbImg = new Image();
+  orbImg.src = "assets/sprites/orb-orange.png";
+
   // ---------- Data pasangan kata (Indonesia -> Inggris) ----------
   const PASANGAN = [
     { indo: "Sibuk", inggris: "Hectic" },
@@ -149,55 +261,77 @@ window.Babak1 = (function () {
 
   // ---------- Render ----------
   function draw(ctx) {
-    // gambar lubang submit sebagai "pocket" gelap (mirip lubang biliar) di tiap dead-end
+    // gambar lubang submit sebagai Basket Buah di tiap dead-end
     ZONA.forEach(function (z) {
       const isCurrentZona = currentZona === z;
       const px = z.col * TILE + TILE / 2;
       const py = z.row * TILE + TILE / 2;
-
-      // lingkaran lubang -- gelap pekat, beda dari warna bola kata
-      ctx.beginPath();
-      ctx.arc(px, py, TILE * 0.42, 0, Math.PI * 2);
-      ctx.fillStyle = isCurrentZona ? "#0a120d" : "#060907";
-      ctx.fill();
-      ctx.strokeStyle = isCurrentZona ? "#f0c468" : "#3a5a45";
-      ctx.lineWidth = isCurrentZona ? 2 : 1.5;
-      ctx.stroke();
+      
+      drawBasket(ctx, px, py, isCurrentZona, "rgba(240, 138, 60, 0.45)");
 
       // label kata Inggris -- hanya ditonjolkan saat player berdiri di lubang ini
       ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillStyle = isCurrentZona ? "#f0c468" : "#5a6e5f";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#1b3821";
+      ctx.strokeText(z.inggris, px, py + TILE * 0.42 + 12);
+      ctx.fillStyle = isCurrentZona ? "#ffd700" : "#a8d5b2";
       ctx.fillText(z.inggris, px, py + TILE * 0.42 + 12);
     });
 
-    // gambar bola yang belum diambil & belum submit (di dalam labirin)
+    // gambar buah apel yang belum diambil (di dalam labirin)
     bolaList.forEach(function (b) {
       if (b.taken || b.submitted) return;
       const px = b.col * TILE + TILE / 2;
       const py = b.row * TILE + TILE / 2;
-      const pulse = 7 + Math.sin(performance.now() / 220) * 1.4;
-      ctx.beginPath();
-      ctx.arc(px, py, pulse, 0, Math.PI * 2);
-      ctx.fillStyle = "#e08a3c";
-      ctx.fill();
+      const size = 16 + Math.sin(performance.now() / 220) * 2; // Pulsing size
+      
+      drawFruit(ctx, px, py, size, "orange");
+
       ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillStyle = "#1c2b24";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#1c2b24";
+      ctx.strokeText(b.indo, px, py + 18);
+      ctx.fillStyle = "#fff";
       ctx.fillText(b.indo, px, py + 18);
     });
   }
 
   function drawCarried(ctx, playerX, playerY) {
     if (!carrying) return;
-    ctx.beginPath();
-    ctx.arc(playerX, playerY - 14, 6, 0, Math.PI * 2);
-    ctx.fillStyle = "#e08a3c";
-    ctx.fill();
+    
+    // Determine animation movement state
+    const player = window.PlayerModule ? window.PlayerModule.self : { isMoving: false };
+    const isMoving = player.isMoving || false;
+    
+    // Cute carried item bobbing animation (faster bounce when moving, gentle float when idle)
+    const bobPeriod = isMoving ? 120 : 220;
+    const bob = Math.sin(performance.now() / bobPeriod) * 1.6;
+    
+    // Position fruit to float cleanly above the head with a distinct gap (not touching the head)
+    const ox = playerX;
+    const oy = playerY - 24 + bob; 
+    const size = 15; // cute, visible size
+    
+    ctx.save();
+    
+    // Soft shadow below the fruit
+    ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    
+    drawFruit(ctx, ox, oy, size, "orange");
+    ctx.restore();
+    
+    // Word label floats cleanly above the speech bubble with outline for visibility
     ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillStyle = "#1c2b24";
-    ctx.fillText(carrying.indo, playerX, playerY - 22);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#1c2b24";
+    ctx.strokeText(carrying.indo, playerX, playerY - 36);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(carrying.indo, playerX, playerY - 36);
   }
 
   function getProgress() {

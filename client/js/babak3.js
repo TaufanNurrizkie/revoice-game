@@ -56,10 +56,7 @@ window.Babak3 = (function () {
 
   function resetLevel() {
     // Reset player
-    window.PlayerModule.self.col = 1;
-    window.PlayerModule.self.row = 1;
-    window.PlayerModule.self.x = 1 * window.Maze.TILE + window.Maze.TILE / 2;
-    window.PlayerModule.self.y = 1 * window.Maze.TILE + window.Maze.TILE / 2;
+    window.PlayerModule.teleport(1, 1);
     window.PlayerModule.setQueuedDir(null);
 
     // Reset ghost
