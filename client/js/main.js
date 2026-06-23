@@ -153,10 +153,7 @@
     window.Babak2.init();
 
     // Reset posisi player ke atas peta baru
-    window.PlayerModule.self.col = 10;
-    window.PlayerModule.self.row = 1;
-    window.PlayerModule.self.x = 10 * window.Maze.TILE + window.Maze.TILE / 2;
-    window.PlayerModule.self.y = 1 * window.Maze.TILE + window.Maze.TILE / 2;
+    window.PlayerModule.teleport(10, 1);
     window.PlayerModule.setQueuedDir(null);
 
     // Tampilkan UI pertanyaan

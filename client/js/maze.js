@@ -78,11 +78,72 @@ window.Maze = (function () {
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const val = grid[r][c];
-        if (val === 1) { // Wall
-          ctx.fillStyle = "#1f3326";
+        if (val === 1) { // Wall (Minimal Garden Hedge with occasional flowers/details)
+          // Ground base under hedges
+          ctx.fillStyle = "#142618";
           ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          ctx.strokeStyle = "#142318";
-          ctx.strokeRect(c * TILE + 0.5, r * TILE + 0.5, TILE - 1, TILE - 1);
+          
+          // Clean hedge block with rounded corners
+          ctx.fillStyle = "#254c2d";
+          const margin = 1;
+          const rx = c * TILE + margin;
+          const ry = r * TILE + margin;
+          const rw = TILE - margin * 2;
+          const rh = TILE - margin * 2;
+          const rad = 4; // corner radius
+          
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(rx, ry, rw, rh, rad);
+          } else {
+            ctx.rect(rx, ry, rw, rh);
+          }
+          ctx.fill();
+          
+          // Simple inner highlight for 3D depth (soft top-left inner border)
+          ctx.strokeStyle = "#32663d";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(rx + rad, ry + 1.5);
+          ctx.lineTo(rx + rw - rad, ry + 1.5);
+          ctx.moveTo(rx + 1.5, ry + rad);
+          ctx.lineTo(rx + 1.5, ry + rh - rad);
+          ctx.stroke();
+
+          // Decide variety decoration based on coordinates (deterministic pseudo-random)
+          const seed = (c * 17 + r * 23) % 10;
+          if (seed === 0) {
+            // Draw 1-2 tiny flowers
+            ctx.fillStyle = (c + r) % 2 === 0 ? "#ffd700" : "#e95c5c"; // yellow or red flower
+            ctx.beginPath();
+            ctx.arc(rx + rw * 0.35, ry + rh * 0.4, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Flower center
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(rx + rw * 0.35, ry + rh * 0.4, 0.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // A second flower on some
+            if (c % 2 === 0) {
+              ctx.fillStyle = "#e286e2"; // pink flower
+              ctx.beginPath();
+              ctx.arc(rx + rw * 0.65, ry + rh * 0.65, 1.8, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = "#fff";
+              ctx.beginPath();
+              ctx.arc(rx + rw * 0.65, ry + rh * 0.65, 0.6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          } else if (seed === 1) {
+            // Draw a cute small leaf detail inside the hedge
+            ctx.fillStyle = "#417a4c"; // lighter leaf green
+            ctx.beginPath();
+            ctx.ellipse(rx + rw * 0.5, ry + rh * 0.45, 3.5, 1.8, Math.PI / 4, 0, Math.PI * 2);
+            ctx.ellipse(rx + rw * 0.35, ry + rh * 0.55, 3, 1.5, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
         } else if (val === 2) { // Water
           // Gambar animasi sungai sederhana (bergerak horizontal)
           const offset = (performance.now() / 40) % TILE;

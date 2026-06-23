@@ -24,12 +24,12 @@ window.PlayerModule = (function () {
       { col: 1, row: 1 },
     ],
     left: [
-      { col: 2, row: 1 },
-      { col: 2, row: 2 },
+      { col: 0, row: 2 },
+      { col: 1, row: 2 },
     ],
     right: [
-      { col: 0, row: 2 },
-      { col: 1, row: 3 },
+      { col: 2, row: 1 },
+      { col: 3, row: 1 },
     ],
   };
 
@@ -73,6 +73,11 @@ window.PlayerModule = (function () {
     characterId: myCharacterId,
     facing: "down", // arah hadap terakhir, dipakai untuk pilih baris sprite
     animFrame: 0,
+    isMoving: false,
+    startCol: 1,
+    startRow: 1,
+    targetCol: 1,
+    targetRow: 1,
   };
 
   loadCharacterImage(self.characterId);
@@ -83,6 +88,10 @@ window.PlayerModule = (function () {
   function syncPixel() {
     self.x = self.col * TILE + TILE / 2;
     self.y = self.row * TILE + TILE / 2;
+    self.startCol = self.col;
+    self.startRow = self.row;
+    self.targetCol = self.col;
+    self.targetRow = self.row;
   }
   syncPixel();
   window.Maze.forceWalkable(self.col, self.row);
@@ -102,33 +111,89 @@ window.PlayerModule = (function () {
     queuedDir = dir;
   }
 
+  function teleport(col, row) {
+    self.col = col;
+    self.row = row;
+    self.isMoving = false;
+    self.moveTimer = 0;
+    self.animFrame = 0;
+    self.startCol = col;
+    self.startRow = row;
+    self.targetCol = col;
+    self.targetRow = row;
+    syncPixel();
+  }
+
   function update(dt, blocked) {
-    if (blocked || !queuedDir) {
-      self.animFrame = 0;
-      return;
+    // 1. Update local player movement interpolation
+    if (self.isMoving) {
+      self.moveTimer += dt;
+      let t = self.moveTimer / self.moveInterval;
+      if (t >= 1) {
+        t = 1;
+        self.isMoving = false;
+        self.col = self.targetCol;
+        self.row = self.targetRow;
+        syncPixel();
+        self.animFrame = 0;
+      } else {
+        const startX = self.startCol * TILE + TILE / 2;
+        const startY = self.startRow * TILE + TILE / 2;
+        const targetX = self.targetCol * TILE + TILE / 2;
+        const targetY = self.targetRow * TILE + TILE / 2;
+        self.x = startX + (targetX - startX) * t;
+        self.y = startY + (targetY - startY) * t;
+        
+        // Cycle walking animation frames (0 or 1)
+        self.animFrame = Math.floor(t * 2) % 2;
+      }
     }
 
-    const v = dirVector(queuedDir);
-    if (v.x === 0 && v.y === 0) return;
+    // 2. Start a new move if not currently moving
+    if (!self.isMoving) {
+      if (blocked || !queuedDir) {
+        self.animFrame = 0;
+      } else {
+        const v = dirVector(queuedDir);
+        if (v.x !== 0 || v.y !== 0) {
+          self.facing = queuedDir;
+          const nc = self.col + v.x;
+          const nr = self.row + v.y;
+          if (window.Maze.isWalkable(nc, nr)) {
+            self.isMoving = true;
+            self.startCol = self.col;
+            self.startRow = self.row;
+            self.targetCol = nc;
+            self.targetRow = nr;
+            self.moveTimer = 0;
+            self.animFrame = 0;
+            if (onMoveCallback) onMoveCallback(self.targetCol, self.targetRow, self.facing);
+          } else {
+            self.animFrame = 0;
+          }
+        }
+      }
+    }
 
-    self.facing = queuedDir;
-
-    self.moveTimer += dt;
-    if (self.moveTimer < self.moveInterval) return;
-
-    const nc = self.col + v.x;
-    const nr = self.row + v.y;
-
-    if (window.Maze.isWalkable(nc, nr)) {
-      self.col = nc;
-      self.row = nr;
-      syncPixel();
-      self.moveTimer = 0;
-      self.animFrame = 1 - self.animFrame; // toggle frame jalan HANYA saat benar-benar berpindah tile
-      if (onMoveCallback) onMoveCallback(self.col, self.row, self.facing);
-    } else {
-      self.moveTimer = self.moveInterval;
-      self.animFrame = 0; // diam di tempat (ketabrak dinding) -> tampilkan frame diam, bukan animasi jalan
+    // 3. Update remote players interpolation
+    for (let id in remotePlayers) {
+      const p = remotePlayers[id];
+      if (p.lerpTimer < self.moveInterval) {
+        p.lerpTimer += dt;
+        let t = p.lerpTimer / self.moveInterval;
+        if (t >= 1) {
+          t = 1;
+          p.x = p.targetX;
+          p.y = p.targetY;
+          p.animFrame = 0;
+        } else {
+          p.x = p.startX + (p.targetX - p.startX) * t;
+          p.y = p.startY + (p.targetY - p.startY) * t;
+          p.animFrame = Math.floor(t * 2) % 2;
+        }
+      } else {
+        p.animFrame = 0;
+      }
     }
   }
 
@@ -185,12 +250,10 @@ window.PlayerModule = (function () {
 
     // render player lain (remote) dulu, supaya player sendiri tetap di atas/lebih jelas
     Object.values(remotePlayers).forEach(function (p) {
-      const px = p.col * TILE + TILE / 2;
-      const py = p.row * TILE + TILE / 2;
       drawSprite(
         ctx,
-        px,
-        py,
+        p.x,
+        p.y,
         p.characterId || "cat",
         p.facing || "down",
         p.animFrame || 0,
@@ -214,20 +277,55 @@ window.PlayerModule = (function () {
   // --- fungsi untuk dipanggil dari socket-client.js ---
   function setRoomState(playersObj) {
     Object.keys(playersObj).forEach(function (id) {
-      remotePlayers[id] = playersObj[id];
+      const p = playersObj[id];
+      remotePlayers[id] = {
+        col: p.col,
+        row: p.row,
+        x: p.col * TILE + TILE / 2,
+        y: p.row * TILE + TILE / 2,
+        startX: p.col * TILE + TILE / 2,
+        startY: p.row * TILE + TILE / 2,
+        targetX: p.col * TILE + TILE / 2,
+        targetY: p.row * TILE + TILE / 2,
+        lerpTimer: 120, // finished
+        facing: p.facing || "down",
+        characterId: p.characterId || "cat",
+        animFrame: 0,
+        color: p.color,
+        name: p.name,
+      };
     });
   }
   function addRemotePlayer(id, data) {
-    remotePlayers[id] = data;
+    const px = data.col * TILE + TILE / 2;
+    const py = data.row * TILE + TILE / 2;
+    remotePlayers[id] = {
+      col: data.col,
+      row: data.row,
+      x: px,
+      y: py,
+      startX: px,
+      startY: py,
+      targetX: px,
+      targetY: py,
+      lerpTimer: 120, // finished
+      facing: data.facing || "down",
+      characterId: data.characterId || "cat",
+      animFrame: 0,
+      color: data.color,
+      name: data.name,
+    };
   }
   function updateRemotePlayer(id, col, row, facing) {
-    if (remotePlayers[id]) {
-      const p = remotePlayers[id];
-      if (p.col !== col || p.row !== row) {
-        p.animFrame = 1 - (p.animFrame || 0);
-      }
+    const p = remotePlayers[id];
+    if (p) {
       p.col = col;
       p.row = row;
+      p.startX = p.x;
+      p.startY = p.y;
+      p.targetX = col * TILE + TILE / 2;
+      p.targetY = row * TILE + TILE / 2;
+      p.lerpTimer = 0;
       if (facing) p.facing = facing;
     }
   }
@@ -247,5 +345,6 @@ window.PlayerModule = (function () {
     addRemotePlayer,
     updateRemotePlayer,
     removeRemotePlayer,
+    teleport,
   };
 })();
