@@ -13,7 +13,7 @@ function registerRoomHandlers(io) {
   io.on("connection", (socket) => {
     console.log("Client connect:", socket.id);
 
-    socket.on("join_room", ({ roomId, name, characterId }) => {
+    socket.on("join_room", ({ roomId, name, characterId, babak }) => {
       socket.join(roomId);
       socket.data.roomId = roomId;
       socket.data.name = name;
@@ -24,11 +24,12 @@ function registerRoomHandlers(io) {
 
       // posisi awal default, nanti diupdate begitu client kirim "move"
       rooms[roomId].players[socket.id] = {
-        col: 1,
-        row: 1,
+        col: -1,
+        row: -1,
         name: name || "Player",
         characterId: characterId || "cat",
         color: pickColor(Object.keys(rooms[roomId].players).length),
+        babak: babak || 1,
       };
 
       // kirim daftar player yang sudah ada ke client yang baru join
@@ -41,20 +42,22 @@ function registerRoomHandlers(io) {
       });
     });
 
-    socket.on('move', ({ col, row, facing }) => {
+    socket.on('move', ({ col, row, facing, babak }) => {
       const roomId = socket.data.roomId;
       if (!roomId || !rooms[roomId]) return;
 
       rooms[roomId].players[socket.id].col = col;
       rooms[roomId].players[socket.id].row = row;
       if (facing) rooms[roomId].players[socket.id].facing = facing;
+      if (babak !== undefined) rooms[roomId].players[socket.id].babak = babak;
 
       // broadcast posisi terbaru ke semua player lain di room yang sama
       socket.to(roomId).emit('player_moved', {
         id: socket.id,
         col,
         row,
-        facing
+        facing,
+        babak: rooms[roomId].players[socket.id].babak
       });
     });
 

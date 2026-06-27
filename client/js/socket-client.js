@@ -10,7 +10,7 @@ window.SocketClient = (function () {
 
   socket.on("connect", function () {
     console.log("Terhubung ke server, id:", socket.id);
-    socket.emit("join_room", { roomId, name: nama, characterId });
+    socket.emit("join_room", { roomId, name: nama, characterId, babak: window.currentBabak || 1 });
   });
 
   // server kirim daftar player yang sudah ada di room saat kita baru join
@@ -25,7 +25,7 @@ window.SocketClient = (function () {
 
   // player lain bergerak
   socket.on('player_moved', function (data) {
-    window.PlayerModule.updateRemotePlayer(data.id, data.col, data.row, data.facing);
+    window.PlayerModule.updateRemotePlayer(data.id, data.col, data.row, data.facing, data.babak);
   });
 
   // player lain keluar
@@ -33,8 +33,8 @@ window.SocketClient = (function () {
     window.PlayerModule.removeRemotePlayer(data.id);
   });
 
-  function sendMove(col, row, facing) {
-    socket.emit('move', { col, row, facing });
+  function sendMove(col, row, facing, babak) {
+    socket.emit('move', { col, row, facing, babak });
   }
 
   return { socket, sendMove };

@@ -21,10 +21,28 @@
   const banner = document.getElementById("banner-status");
   const submitBtn = document.getElementById("btn-submit");
   const popupTransition = document.getElementById("popup-transition");
+  const popupTransitionTitle = document.getElementById("popup-transition-title");
+  const popupTransitionDesc = document.getElementById("popup-transition-desc");
   const btnLanjut = document.getElementById("btn-lanjut");
+  
+  const popupAlert = document.getElementById("popup-alert");
+  const popupAlertMsg = document.getElementById("popup-alert-msg");
+  
   const babak2QuestionEl = document.getElementById("babak2-question");
+  
+  let alertTimeout;
+  window.showGameAlert = function(title, msg) {
+    popupAlertMsg.textContent = msg || title; // Fallback to title if msg isn't used
+    popupAlert.style.display = "flex";
+    
+    if (alertTimeout) clearTimeout(alertTimeout);
+    alertTimeout = setTimeout(() => {
+      popupAlert.style.display = "none";
+    }, 3000);
+  };
 
   let currentBabak = 1; // 1 atau 2
+  window.currentBabak = currentBabak;
   let gameOver = false;
   const sessionStartTime = performance.now();
 
@@ -73,7 +91,7 @@
 
   // ---------- Hubungkan player move ----------
   window.PlayerModule.onMove(function (col, row, facing) {
-    window.SocketClient.sendMove(col, row, facing);
+    window.SocketClient.sendMove(col, row, facing, currentBabak);
     if (currentBabak === 1) {
       window.Babak1.onPlayerMove(col, row);
     } else if (currentBabak === 2) {
@@ -129,6 +147,9 @@
 
     // Tampilkan popup transisi setelah 1 detik
     setTimeout(function () {
+      popupTransitionTitle.textContent = "Babak 1 Selesai!";
+      popupTransitionDesc.textContent = "Hebat! Anda telah menyelesaikan babak pertama.";
+      btnLanjut.textContent = "Lanjut ke Babak 2";
       popupTransition.style.display = "flex";
     }, 1000);
   });
@@ -146,6 +167,7 @@
   // ==================== BABAK 2 SETUP ====================
   function startBabak2() {
     currentBabak = 2;
+    window.currentBabak = currentBabak;
     window.HUD.setBabak(2);
     window.HUD.resetTimer();
 
@@ -186,6 +208,9 @@
       submitBtn.disabled = true;
 
       setTimeout(function () {
+        popupTransitionTitle.textContent = "Babak 2 Selesai!";
+        popupTransitionDesc.textContent = "Luar biasa! Jembatan makna telah berhasil dibangun.";
+        btnLanjut.textContent = "Lanjut ke Babak 3";
         popupTransition.style.display = "flex";
       }, 1000);
     });
@@ -194,6 +219,7 @@
   // ==================== BABAK 3 SETUP ====================
   function startBabak3() {
     currentBabak = 3;
+    window.currentBabak = currentBabak;
     window.HUD.setBabak(3);
     window.HUD.resetTimer();
 
@@ -315,16 +341,16 @@
 
     if (currentBabak === 1) {
       window.Babak1.draw(ctx);
-      window.PlayerModule.draw(ctx);
+      window.PlayerModule.draw(ctx, currentBabak);
       window.Babak1.drawCarried(ctx, window.PlayerModule.self.x, window.PlayerModule.self.y);
     } else if (currentBabak === 2) {
       window.Babak2.draw(ctx);
-      window.PlayerModule.draw(ctx);
+      window.PlayerModule.draw(ctx, currentBabak);
       window.Babak2.drawCarried(ctx, window.PlayerModule.self.x, window.PlayerModule.self.y);
     } else if (currentBabak === 3) {
       window.Babak3.update(dt);
       window.Babak3.draw(ctx);
-      window.PlayerModule.draw(ctx);
+      window.PlayerModule.draw(ctx, currentBabak);
     }
 
     requestAnimationFrame(loop);

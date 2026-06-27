@@ -122,6 +122,7 @@ window.PlayerModule = (function () {
     self.targetCol = col;
     self.targetRow = row;
     syncPixel();
+    if (onMoveCallback) onMoveCallback(col, row, self.facing);
   }
 
   function update(dt, blocked) {
@@ -245,21 +246,23 @@ window.PlayerModule = (function () {
     );
   }
 
-  function draw(ctx) {
+  function draw(ctx, currentBabak) {
     const displaySize = TILE * 1.6; // sprite digambar sedikit lebih besar dari 1 tile biar terlihat jelas
 
     // render player lain (remote) dulu, supaya player sendiri tetap di atas/lebih jelas
     Object.values(remotePlayers).forEach(function (p) {
-      drawSprite(
-        ctx,
-        p.x,
-        p.y,
-        p.characterId || "cat",
-        p.facing || "down",
-        p.animFrame || 0,
-        displaySize,
-        p.color,
-      );
+      if (p.babak === currentBabak) {
+        drawSprite(
+          ctx,
+          p.x,
+          p.y,
+          p.characterId || "cat",
+          p.facing || "down",
+          p.animFrame || 0,
+          displaySize,
+          p.color,
+        );
+      }
     });
 
     drawSprite(
@@ -293,6 +296,7 @@ window.PlayerModule = (function () {
         animFrame: 0,
         color: p.color,
         name: p.name,
+        babak: p.babak || 1,
       };
     });
   }
@@ -314,9 +318,10 @@ window.PlayerModule = (function () {
       animFrame: 0,
       color: data.color,
       name: data.name,
+      babak: data.babak || 1,
     };
   }
-  function updateRemotePlayer(id, col, row, facing) {
+  function updateRemotePlayer(id, col, row, facing, babak) {
     const p = remotePlayers[id];
     if (p) {
       p.col = col;
@@ -327,6 +332,7 @@ window.PlayerModule = (function () {
       p.targetY = row * TILE + TILE / 2;
       p.lerpTimer = 0;
       if (facing) p.facing = facing;
+      if (babak !== undefined) p.babak = babak;
     }
   }
   function removeRemotePlayer(id) {

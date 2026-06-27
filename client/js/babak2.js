@@ -245,8 +245,16 @@ window.Babak2 = (function () {
       }
       return { cocok: true, bola: submittedBola };
     } else {
-      if (onSubmitResultCallback) onSubmitResultCallback(false, carrying);
-      return { cocok: false, bola: carrying };
+      if (window.showGameAlert) {
+        window.showGameAlert("Jawaban Salah!", "Bola dikembalikan ke posisi semula.");
+      } else {
+        alert("Jawaban salah! Bola dikembalikan ke posisi semula.");
+      }
+      carrying.taken = false;
+      const returnedBola = carrying;
+      carrying = null;
+      if (onSubmitResultCallback) onSubmitResultCallback(false, returnedBola);
+      return { cocok: false, bola: returnedBola };
     }
   }
 
