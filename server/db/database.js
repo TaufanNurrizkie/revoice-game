@@ -32,6 +32,17 @@ const db = new sqlite3.Database(dbPath, (err) => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (session_id) REFERENCES responden (session_id)
       )`);
+
+      // Tabel waktu penyelesaian per babak (untuk rekap admin & leaderboard)
+      db.run(`CREATE TABLE IF NOT EXISTS waktu_babak (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT NOT NULL,
+        babak INTEGER NOT NULL,
+        waktu_detik REAL NOT NULL,
+        skor INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (session_id) REFERENCES responden (session_id)
+      )`);
     });
   }
 });

@@ -1,0 +1,97 @@
+/* ---------- Split Layout (Index) ---------- */
+.split-layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .split-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.index-leaderboard-panel {
+  background: var(--panel);
+  border: 2px solid var(--moss);
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+.index-leaderboard-panel h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: var(--amber-bright);
+  text-align: center;
+  border-bottom: 1px solid var(--moss-dark);
+  padding-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.index-lb-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--moss-dark);
+  transition: background 0.2s;
+}
+.index-lb-item:hover {
+  background: rgba(58, 90, 69, 0.2);
+}
+.index-lb-item:last-child {
+  border-bottom: none;
+}
+.index-lb-rank {
+  font-weight: bold;
+  color: var(--amber);
+  width: 28px;
+  font-size: 16px;
+}
+.index-lb-item:nth-child(1) .index-lb-rank { color: var(--amber-bright); font-size: 18px; }
+.index-lb-item:nth-child(2) .index-lb-rank { color: silver; }
+.index-lb-item:nth-child(3) .index-lb-rank { color: #cd7f32; }
+
+.index-lb-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.index-lb-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+.index-lb-kelas {
+  font-size: 11px;
+  color: var(--parchment-dim);
+}
+.index-lb-stats {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+.index-lb-score {
+  color: var(--amber-bright);
+  font-weight: bold;
+  font-size: 14px;
+}
+.index-lb-time {
+  color: var(--parchment-dim);
+  font-size: 11px;
+}
+.index-lb-empty {
+  text-align: center;
+  color: var(--parchment-dim);
+  font-size: 13px;
+  padding: 20px;
+  font-style: italic;
+}

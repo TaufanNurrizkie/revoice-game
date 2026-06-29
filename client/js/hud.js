@@ -18,9 +18,12 @@ window.HUD = (function () {
     timerEl.textContent = Math.floor((performance.now() - startTime) / 1000);
   }
   function resetTimer() { startTime = performance.now(); }
+  function getElapsedSeconds() {
+    return Math.round((performance.now() - startTime) / 1000 * 10) / 10;
+  }
 
   return {
-    setHearts, setStars, setBabak, tickTimer, resetTimer,
+    setHearts, setStars, setBabak, tickTimer, resetTimer, getElapsedSeconds,
     getHearts: function () { return hearts; },
     getStars: function () { return stars; }
   };

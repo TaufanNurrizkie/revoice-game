@@ -30,3 +30,45 @@ document
       alert("Gagal menyimpan data, coba lagi. (" + err.message + ")");
     }
   });
+
+// Fetch and display mini leaderboard
+async function loadMiniLeaderboard() {
+  const container = document.getElementById("index-lb-content");
+  try {
+    const res = await fetch("/api/responden/leaderboard");
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<div class="index-lb-empty">Belum ada data pemain.</div>';
+      return;
+    }
+
+    // Limit to top 7
+    const topData = data.slice(0, 7);
+    let html = '';
+
+    topData.forEach((player, index) => {
+      html += `
+        <div class="index-lb-item">
+          <div class="index-lb-rank">#${index + 1}</div>
+          <div class="index-lb-info">
+            <div class="index-lb-name">${player.nama}</div>
+            <div class="index-lb-kelas">Kelas: ${player.kelas}</div>
+          </div>
+          <div class="index-lb-stats">
+            <div class="index-lb-score">⭐ ${player.total_skor}</div>
+            <div class="index-lb-time">⏱️ ${player.total_waktu}s</div>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  } catch (err) {
+    console.error("Gagal load leaderboard:", err);
+    container.innerHTML = '<div class="index-lb-empty">Gagal memuat leaderboard.</div>';
+  }
+}
+
+// Load on page load
+loadMiniLeaderboard();

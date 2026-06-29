@@ -4,34 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RE:VOICE — Identitas Responden</title>
-<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/index-lb.css">
 </head>
-<body>
-  <div class="form-wrap">
-    <div class="eyebrow">RE:VOICE</div>
-    <h1>Identitas Responden</h1>
-    <p class="subtitle">Isi data berikut sebelum memulai permainan.</p>
 
-    <form id="form-responden">
-      <label>Nama
-        <input type="text" id="nama" required>
-      </label>
-      <label>Kelas
-        <input type="text" id="kelas" required>
-      </label>
-      <label>Jenis Kelamin
-        <select id="jenisKelamin" required>
-          <option value="">Pilih...</option>
-          <option value="L">Laki-laki</option>
-          <option value="P">Perempuan</option>
-        </select>
-      </label>
-      <label>Kode Room (dari guru)
-        <input type="text" id="roomId" placeholder="contoh: kelas10ipa1" required>
-      </label>
-      <button type="submit">Mulai Bermain</button>
-    </form>
-  </div>
+<body>
+    <div class="split-layout">
+        <!-- Form Identitas -->
+        <div class="form-wrap">
+            <div class="eyebrow">RE:VOICE</div>
+            <h1>Identitas Responden</h1>
+            <p class="subtitle">Isi data berikut sebelum memulai permainan.</p>
+
+            <form id="form-responden">
+                <label>Nama
+                    <input type="text" id="nama" required>
+                </label>
+                <label>Kelas
+                    <input type="text" id="kelas" required>
+                </label>
+                <label>Jenis Kelamin
+                    <select id="jenisKelamin" required>
+                        <option value="">Pilih...</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                </label>
+                <label>Kode Room (dari guru)
+                    <input type="text" id="roomId" placeholder="contoh: kelas10ipa1" required>
+                </label>
+                <button type="submit">Mulai Bermain</button>
+            </form>
+        </div>
+
+        <!-- Mini Leaderboard -->
+        <div class="index-leaderboard-panel">
+            <h2>Top 7 Leaderboard</h2>
+            <div id="index-lb-content">
+                <div class="index-lb-empty">Memuat data...</div>
+            </div>
+        </div>
+    </div>
 
 <script src="js/identitas.js"></script>
 </body>

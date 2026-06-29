@@ -10,11 +10,28 @@
 // Diekspos lewat window.Maze supaya bisa dipakai file lain tanpa module bundler.
 
 window.Maze = (function () {
-  const TILE = 22;
+  const TILE = 26;
   const COLS = 21;
   const ROWS = 19;
   
   let grid = [];
+
+  // Load tile image assets
+  const images = {};
+  const imageSources = {
+    biasa: 'assets/tiles/tile_biasa.png',
+    planet: 'assets/tiles/tile_planet.png',
+    bintang: 'assets/tiles/tile_bintang.png',
+    boost: 'assets/tiles/tile_boost.png',
+    portal: 'assets/tiles/tile_portal.png',
+    tujuan: 'assets/tiles/tile_tujuan.png'
+  };
+
+  for (let key in imageSources) {
+    const img = new Image();
+    img.src = imageSources[key];
+    images[key] = img;
+  }
 
   const defaultPattern = [
     "#####################",
@@ -75,106 +92,123 @@ window.Maze = (function () {
   }
 
   function draw(ctx) {
+    // 1. Draw Space Background
+    ctx.fillStyle = "#0B1026";
+    ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
+
+    // Nebula effect
+    const g1 = ctx.createRadialGradient(COLS*TILE*0.3, ROWS*TILE*0.3, 0, COLS*TILE*0.3, ROWS*TILE*0.3, COLS*TILE*0.8);
+    g1.addColorStop(0, "rgba(77, 163, 255, 0.15)");
+    g1.addColorStop(1, "rgba(77, 163, 255, 0)");
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
+
+    const g2 = ctx.createRadialGradient(COLS*TILE*0.7, ROWS*TILE*0.8, 0, COLS*TILE*0.7, ROWS*TILE*0.8, COLS*TILE*0.7);
+    g2.addColorStop(0, "rgba(176, 102, 255, 0.12)");
+    g2.addColorStop(1, "rgba(176, 102, 255, 0)");
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
+
+    // Global stars
+    for (let i = 0; i < 45; i++) {
+      const sx = (Math.sin(i * 123.45) * 0.5 + 0.5) * (COLS * TILE);
+      const sy = (Math.cos(i * 321.12) * 0.5 + 0.5) * (ROWS * TILE);
+      const size = (Math.sin(i * 45) * 0.5 + 0.5) * 1.2 + 0.5;
+      
+      const t = performance.now() / 1500 + i;
+      const twinkle = Math.sin(t * 3) * 0.5 + 0.5;
+      
+      let starColor = "#FFFFFF";
+      if (i % 3 === 0) starColor = "#FFDB66";
+      if (i % 4 === 0) starColor = "#6CFFE8";
+      if (i % 5 === 0) starColor = "#B066FF";
+      
+      ctx.globalAlpha = 0.2 + twinkle * 0.8;
+      ctx.fillStyle = starColor;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      if (twinkle > 0.7 && size > 1) {
+        ctx.shadowColor = starColor;
+        ctx.shadowBlur = 4;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+    ctx.globalAlpha = 1.0;
+
+    // Helper to draw tile images cropped to remove AI-generated borders
+    function drawTileImage(img, col, row) {
+        if (!img || !img.complete || img.width === 0) return;
+        const offset = 0; // No overlap, perfect uniform size
+        const cropX = img.width * 0.12;
+        const cropY = img.height * 0.12;
+        const cropW = img.width * 0.76;
+        const cropH = img.height * 0.76;
+        ctx.drawImage(
+           img, 
+           cropX, cropY, cropW, cropH, 
+           col * TILE - offset, row * TILE - offset, TILE + offset*2, TILE + offset*2
+        );
+    }
+
+    // 2. Draw Maze Grid Using Assets
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const val = grid[r][c];
-        if (val === 1) { // Wall (Minimal Garden Hedge with occasional flowers/details)
-          // Ground base under hedges
-          ctx.fillStyle = "#142618";
-          ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          
-          // Clean hedge block with rounded corners
-          ctx.fillStyle = "#254c2d";
-          const margin = 1;
-          const rx = c * TILE + margin;
-          const ry = r * TILE + margin;
-          const rw = TILE - margin * 2;
-          const rh = TILE - margin * 2;
-          const rad = 4; // corner radius
-          
-          ctx.beginPath();
-          if (ctx.roundRect) {
-            ctx.roundRect(rx, ry, rw, rh, rad);
-          } else {
-            ctx.rect(rx, ry, rw, rh);
-          }
-          ctx.fill();
-          
-          // Simple inner highlight for 3D depth (soft top-left inner border)
-          ctx.strokeStyle = "#32663d";
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(rx + rad, ry + 1.5);
-          ctx.lineTo(rx + rw - rad, ry + 1.5);
-          ctx.moveTo(rx + 1.5, ry + rad);
-          ctx.lineTo(rx + 1.5, ry + rh - rad);
-          ctx.stroke();
 
-          // Decide variety decoration based on coordinates (deterministic pseudo-random)
-          const seed = (c * 17 + r * 23) % 10;
-          if (seed === 0) {
-            // Draw 1-2 tiny flowers
-            ctx.fillStyle = (c + r) % 2 === 0 ? "#ffd700" : "#e95c5c"; // yellow or red flower
-            ctx.beginPath();
-            ctx.arc(rx + rw * 0.35, ry + rh * 0.4, 1.8, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Flower center
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(rx + rw * 0.35, ry + rh * 0.4, 0.6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // A second flower on some
-            if (c % 2 === 0) {
-              ctx.fillStyle = "#e286e2"; // pink flower
-              ctx.beginPath();
-              ctx.arc(rx + rw * 0.65, ry + rh * 0.65, 1.8, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.fillStyle = "#fff";
-              ctx.beginPath();
-              ctx.arc(rx + rw * 0.65, ry + rh * 0.65, 0.6, 0, Math.PI * 2);
-              ctx.fill();
-            }
-          } else if (seed === 1) {
-            // Draw a cute small leaf detail inside the hedge
-            ctx.fillStyle = "#417a4c"; // lighter leaf green
-            ctx.beginPath();
-            ctx.ellipse(rx + rw * 0.5, ry + rh * 0.45, 3.5, 1.8, Math.PI / 4, 0, Math.PI * 2);
-            ctx.ellipse(rx + rw * 0.35, ry + rh * 0.55, 3, 1.5, -Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
+        // Draw Portal block at spawn point (1,1)
+        if (r === 1 && c === 1) {
+          if (images.portal && images.portal.complete) {
+            drawTileImage(images.portal, c, r);
           }
-        } else if (val === 2) { // Water
-          // Gambar animasi sungai sederhana (bergerak horizontal)
-          const offset = (performance.now() / 40) % TILE;
-          ctx.fillStyle = "#103c54";
+          continue; 
+        }
+
+        if (val === 1) { // Wall (Kotak Biasa / Border)
+          let isBorder = (r === 0 || r === ROWS - 1 || c === 0 || c === COLS - 1);
+          const seed = (c * 31 + r * 17) % 25;
+          
+          let tileType = "biasa";
+          if (!isBorder) {
+              if (seed === 0 || seed === 1) tileType = "planet";
+              else if (seed === 2 || seed === 3) tileType = "bintang";
+              else if (seed === 4 || seed === 5) tileType = "boost";
+          }
+          
+          if (images[tileType] && images[tileType].complete) {
+             drawTileImage(images[tileType], c, r);
+             // Tint border purple since tile_border generation failed and we reuse biasa
+             if (isBorder && tileType === "biasa") {
+                ctx.fillStyle = "rgba(176, 102, 255, 0.4)";
+                const offset = 0;
+                ctx.fillRect(c * TILE - offset, r * TILE - offset, TILE + offset*2, TILE + offset*2);
+             }
+          }
+
+        } else if (val === 2) { // Water (Sci-fi energy)
+          ctx.fillStyle = "#00E5FF";
           ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          ctx.strokeStyle = "#1c5d80";
+          ctx.strokeStyle = "#FFFFFF";
           ctx.beginPath();
           ctx.moveTo(c * TILE, r * TILE + TILE/2);
           ctx.lineTo(c * TILE + TILE, r * TILE + TILE/2);
           ctx.stroke();
-        } else if (val === 3) { // Bridge
-          ctx.fillStyle = "#7a5c43"; // warna kayu
+        } else if (val === 3) { // Bridge (Sci-fi bridge)
+          ctx.fillStyle = "#4DA3FF";
           ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          // Garis papan kayu
-          ctx.strokeStyle = "#4a3320";
+          ctx.strokeStyle = "#00E5FF";
           ctx.beginPath();
           ctx.moveTo(c * TILE + TILE * 0.2, r * TILE);
           ctx.lineTo(c * TILE + TILE * 0.2, r * TILE + TILE);
           ctx.moveTo(c * TILE + TILE * 0.8, r * TILE);
           ctx.lineTo(c * TILE + TILE * 0.8, r * TILE + TILE);
           ctx.stroke();
-        } else if (val === 4) { // Door
-          ctx.fillStyle = "#5c4033"; // dark brown frame
-          ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          ctx.fillStyle = "#a0522d"; // sienna inner
-          ctx.fillRect(c * TILE + 2, r * TILE + 2, TILE - 4, TILE - 2);
-          // Knob
-          ctx.fillStyle = "#ffd700";
-          ctx.beginPath();
-          ctx.arc(c * TILE + TILE - 5, r * TILE + TILE / 2, 2, 0, Math.PI * 2);
-          ctx.fill();
+        } else if (val === 4) { // Door (Tujuan / Goal - Orange)
+          if (images.tujuan && images.tujuan.complete) {
+             drawTileImage(images.tujuan, c, r);
+          }
         }
       }
     }

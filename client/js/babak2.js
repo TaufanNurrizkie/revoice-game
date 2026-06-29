@@ -208,6 +208,7 @@ window.Babak2 = (function () {
       if (target) {
         target.taken = true;
         carrying = target;
+        if (window.AudioEngine) window.AudioEngine.play('pickup');
       }
     }
 

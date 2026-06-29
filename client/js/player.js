@@ -168,6 +168,7 @@ window.PlayerModule = (function () {
             self.targetRow = nr;
             self.moveTimer = 0;
             self.animFrame = 0;
+            if (window.AudioEngine) window.AudioEngine.play('move');
             if (onMoveCallback) onMoveCallback(self.targetCol, self.targetRow, self.facing);
           } else {
             self.animFrame = 0;

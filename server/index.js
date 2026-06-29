@@ -8,6 +8,7 @@ const { Server } = require('socket.io');
 
 const respondenRoutes = require('./routes/responden');
 const exportRoutes = require('./routes/export');
+const adminRoutes = require('./routes/admin');
 const registerRoomHandlers = require('./socket/roomManager');
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, '..', 'client')));
 // API routes
 app.use('/api/responden', respondenRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Socket.io: semua logic room & broadcast posisi ada di roomManager.js
 registerRoomHandlers(io);

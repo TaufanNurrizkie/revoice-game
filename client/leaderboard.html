@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard - RE:VOICE</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="leaderboard-wrap">
+    <div class="leaderboard-header">
+      <div class="eyebrow">RE:VOICE</div>
+      <h1>LEADERBOARD</h1>
+      <div class="subtitle">Pemain Terbaik & Tercepat</div>
+    </div>
+
+    <!-- Podium (Top 3) -->
+    <div class="podium-container" id="podium-container">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- The rest of players -->
+    <div class="leaderboard-list">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Waktu</th>
+            <th>Total Skor</th>
+          </tr>
+        </thead>
+        <tbody id="lb-table-body">
+          <tr>
+            <td colspan="5" class="text-center">Memuat data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button id="btn-main-lagi" class="btn-primary mt-20" onclick="window.location.href='index.html'">Main Lagi</button>
+  </div>
+
+  <script src="js/leaderboard.js"></script>
+</body>
+</html>

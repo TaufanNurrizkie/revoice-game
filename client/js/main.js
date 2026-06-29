@@ -58,7 +58,16 @@
   };
   const heldKeys = {};
 
+  window.addEventListener("click", function () {
+    window.AudioEngine.init();
+    window.AudioEngine.startBGM();
+  });
+
   window.addEventListener("keydown", function (e) {
+    // Initialize audio on first user interaction
+    window.AudioEngine.init();
+    window.AudioEngine.startBGM();
+
     if (keyDirMap[e.key]) {
       heldKeys[keyDirMap[e.key]] = true;
       window.PlayerModule.setQueuedDir(keyDirMap[e.key]);
@@ -131,9 +140,11 @@
 
   window.Babak1.onSubmitResult(function (cocok, bola) {
     if (cocok) {
+      window.AudioEngine.play('correct');
       window.HUD.setStars(window.HUD.getStars() + 1);
       banner.innerHTML = 'Cocok! <b>"' + bola.indo + '"</b> = <b>"' + bola.inggris + '"</b> tercatat.';
     } else {
+      window.AudioEngine.play('wrong');
       banner.innerHTML = "Belum cocok, coba lubang lain.";
     }
 
@@ -142,8 +153,12 @@
   });
 
   window.Babak1.onAllSubmitted(function () {
+    window.AudioEngine.play('complete');
     banner.innerHTML = "<b>Semua kata berhasil dicocokkan!</b> Babak 1 selesai.";
     submitBtn.disabled = true;
+
+    // Simpan waktu babak 1
+    sendWaktu(1, window.HUD.getElapsedSeconds(), window.HUD.getStars());
 
     // Tampilkan popup transisi setelah 1 detik
     setTimeout(function () {
@@ -187,11 +202,13 @@
     // Setup callbacks Babak 2
     window.Babak2.onSubmitResult(function (cocok, bola) {
       if (cocok) {
+        window.AudioEngine.play('correct');
         window.HUD.setStars(window.HUD.getStars() + 1);
         banner.innerHTML = 'Benar! <b>"' + bola.indo + '"</b> — jembatan bertambah!';
         banner.style.color = "#8fd93f";
         updateBabak2Question();
       } else {
+        window.AudioEngine.play('wrong');
         banner.innerHTML = 'Kurang tepat! Cari jawaban yang benar untuk soal ini.';
         banner.style.color = "#d9534f";
       }
@@ -204,8 +221,12 @@
     });
 
     window.Babak2.onAllSubmitted(function () {
+      window.AudioEngine.play('complete');
       banner.innerHTML = "<b>Jembatan selesai dibangun!</b> Kamu berhasil menyeberang! 🎉";
       submitBtn.disabled = true;
+
+      // Simpan waktu babak 2
+      sendWaktu(2, window.HUD.getElapsedSeconds(), window.HUD.getStars());
 
       setTimeout(function () {
         popupTransitionTitle.textContent = "Babak 2 Selesai!";
@@ -234,14 +255,17 @@
 
     window.Babak3.onSubmitResult(function (cocok, bola, isGhost) {
       if (cocok) {
+        window.AudioEngine.play('correct');
         window.HUD.setStars(window.HUD.getStars() + 1);
         banner.innerHTML = 'Benar! Jawaban tepat, lanjut soal berikutnya!';
         banner.style.color = "#8fd93f";
         updateBabak3Question();
       } else {
         if (isGhost) {
+          window.AudioEngine.play('ghost');
           banner.innerHTML = 'HAP! Tertangkap hantu 👻, ulangi dari atas!';
         } else {
+          window.AudioEngine.play('wrong');
           banner.innerHTML = 'Salah pintu! Ulangi dari atas!';
         }
         banner.style.color = "#d9534f";
@@ -255,12 +279,19 @@
     });
 
     window.Babak3.onAllSubmitted(function () {
+      window.AudioEngine.play('complete');
       gameOver = true;
       babak2QuestionEl.style.display = "none";
       banner.innerHTML = "<b>Tamat!</b> Kamu berhasil melewati semua labirin! 🎉";
       submitBtn.disabled = true;
       
-      // Bisa tambahkan logic pindah ke halaman skor di sini
+      // Simpan waktu babak 3
+      sendWaktu(3, window.HUD.getElapsedSeconds(), window.HUD.getStars());
+
+      // Redirect ke leaderboard setelah 2.5 detik
+      setTimeout(function () {
+        window.location.href = "leaderboard.html";
+      }, 2500);
     });
   }
 
@@ -308,6 +339,17 @@
   }
 
   // ==================== UTILITY ====================
+  function sendWaktu(babak, waktuDetik, skor) {
+    const sessionId = sessionStorage.getItem("revoice_sessionId");
+    fetch("/api/responden/waktu", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, babak, waktuDetik, skor }),
+    }).catch(function (err) {
+      console.warn("Gagal kirim waktu ke server:", err.message);
+    });
+  }
+
   function sendJawaban(babak, soalTeks, jawaban, benar) {
     const sessionId = sessionStorage.getItem("revoice_sessionId");
     fetch("/api/responden/jawaban", {

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - RE:VOICE</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-container">
+    <div class="admin-header">
+      <div>
+        <div class="eyebrow">RE:VOICE</div>
+        <h1>Admin Dashboard</h1>
+      </div>
+      <div class="admin-actions">
+        <select id="kelas-filter">
+          <option value="">Semua Kelas</option>
+        </select>
+        <button id="btn-export" class="btn-primary">Export CSV</button>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Waktu B1</th>
+            <th>Skor B1</th>
+            <th>Waktu B2</th>
+            <th>Skor B2</th>
+            <th>Waktu B3</th>
+            <th>Skor B3</th>
+            <th>Total Waktu</th>
+            <th>Total Skor</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr>
+            <td colspan="10" class="text-center">Memuat data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
