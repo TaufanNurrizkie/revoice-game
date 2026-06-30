@@ -1,51 +1,383 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RE:VOICE — Identitas Responden</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/index-lb.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RE:VOICE — Identitas Responden</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/index-lb.css">
+  <style>
+    /* ---- override body ke cosmic ---- */
+    body {
+      background: radial-gradient(circle at center, #0e0a29 0%, #03020c 100%) !important;
+      overflow-x: hidden;
+      position: relative;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* ---- stars canvas background ---- */
+    #star-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ---- layout ---- */
+    .split-layout {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+      max-width: 860px;
+      padding-top: 8px;
+    }
+
+    /* ---- form panel ---- */
+    .form-wrap {
+      background: rgba(13, 17, 43, 0.78) !important;
+      border: 1px solid rgba(139, 92, 246, 0.35) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.2) !important;
+      backdrop-filter: blur(12px);
+      padding: 32px 28px !important;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* planet saturn pojok kanan atas form — dihapus */
+
+    .shooting-star {
+      position: absolute;
+      width: 70px;
+      height: 2px;
+      background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(139,92,246,0.35) 50%, rgba(255,255,255,0.75) 100%);
+      transform: rotate(-35deg);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .star-a { top: 5%; left: 20%; animation: shoot 9s infinite linear 0.5s; }
+    .star-b { top: 5%; left: 55%; animation: shoot 13s infinite linear 4s; }
+    .star-c { top: 5%; left: 80%; animation: shoot 11s infinite linear 7s; }
+
+    @keyframes shoot {
+      0%   { transform: translate(0,0) rotate(-35deg); opacity: 0; }
+      1%   { opacity: 0.8; }
+      5%   { transform: translate(140px,98px) rotate(-35deg); opacity: 0; }
+      100% { transform: translate(140px,98px) rotate(-35deg); opacity: 0; }
+    }
+
+    .bg-sparkle {
+      position: absolute;
+      color: rgba(189,147,249,0.3);
+      font-size: 10px;
+      pointer-events: none;
+      animation: pulseStar 3s infinite ease-in-out;
+    }
+    .sp1 { top: 28%; left: 7%; animation-delay: 0s; }
+    .sp2 { top: 60%; left: 90%; animation-delay: 1.5s; }
+    .sp3 { top: 75%; left: 12%; animation-delay: 0.8s; }
+
+    @keyframes pulseStar {
+      0%, 100% { opacity: 0.15; transform: scale(0.8); }
+      50%       { opacity: 0.7;  transform: scale(1.3); }
+    }
+
+    /* ---- eyebrow + headings ---- */
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #bd93f9;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 4px 0 2px;
+      color: #fff;
+    }
+    .subtitle {
+      font-size: 12px;
+      color: #8ba0d8;
+      margin-bottom: 20px;
+    }
+
+    /* ---- inputs ---- */
+    label { display: block; font-size: 13px; margin-bottom: 12px; color: #c4d0f0; }
+    input, select {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(139,92,246,0.35);
+      background: rgba(20,16,50,0.7);
+      color: #e0e5ff;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #bd93f9;
+      box-shadow: 0 0 8px rgba(189,147,249,0.3);
+    }
+    select option { background: #11183b; }
+
+    /* ---- submit button ---- */
+    button[type="submit"] {
+      width: 100%;
+      background: linear-gradient(135deg, #3b1e75 0%, #17123d 100%);
+      border: 1.5px solid rgba(189,147,249,0.45);
+      color: #e9d5ff;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 30px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    button[type="submit"]:hover {
+      border-color: #bd93f9;
+      box-shadow: 0 0 16px rgba(189,147,249,0.5);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* ---- leaderboard panel ---- */
+    .index-leaderboard-panel {
+      background: rgba(13,17,43,0.78) !important;
+      border: 1px solid rgba(139,92,246,0.25) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 0 30px rgba(139,92,246,0.15) !important;
+      backdrop-filter: blur(12px);
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+      overflow: hidden;
+    }
+    .index-leaderboard-panel h2 {
+      font-size: 16px;
+      color: #bd93f9;
+      margin: 0 0 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="split-layout">
-        <!-- Form Identitas -->
-        <div class="form-wrap">
-            <div class="eyebrow">RE:VOICE</div>
-            <h1>Identitas Responden</h1>
-            <p class="subtitle">Isi data berikut sebelum memulai permainan.</p>
+  <!-- Galaxy background canvas -->
+  <canvas id="star-canvas"></canvas>
 
-            <form id="form-responden">
-                <label>Nama
-                    <input type="text" id="nama" required>
-                </label>
-                <label>Kelas
-                    <input type="text" id="kelas" required>
-                </label>
-                <label>Jenis Kelamin
-                    <select id="jenisKelamin" required>
-                        <option value="">Pilih...</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
-                </label>
-                <label>Kode Room (dari guru)
-                    <input type="text" id="roomId" placeholder="contoh: kelas10ipa1" required>
-                </label>
-                <button type="submit">Mulai Bermain</button>
-            </form>
-        </div>
+  <div class="split-layout">
 
-        <!-- Mini Leaderboard -->
-        <div class="index-leaderboard-panel">
-            <h2>Top 7 Leaderboard</h2>
-            <div id="index-lb-content">
-                <div class="index-lb-empty">Memuat data...</div>
-            </div>
-        </div>
+    <!-- Form Identitas -->
+    <div class="form-wrap">
+      <!-- Decorations -->
+      <div class="shooting-star star-a"></div>
+      <div class="shooting-star star-b"></div>
+      <div class="shooting-star star-c"></div>
+      <div class="bg-sparkle sp1">✦</div>
+      <div class="bg-sparkle sp2">✦</div>
+      <div class="bg-sparkle sp3">✦</div>
+
+      <div class="eyebrow">RE:VOICE</div>
+      <h1>Identitas Responden <span style="color:#bd93f9;font-size:14px;">✦</span></h1>
+      <p class="subtitle">Isi data berikut sebelum memulai permainan.</p>
+
+      <form id="form-responden">
+        <label>Nama
+          <input type="text" id="nama" placeholder="Nama lengkap" required>
+        </label>
+        <label>Kelas
+          <input type="text" id="kelas" placeholder="Contoh: X IPA 1" required>
+        </label>
+        <label>Jenis Kelamin
+          <select id="jenisKelamin" required>
+            <option value="">Pilih...</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </label>
+        <label>Kode Room (dari guru)
+          <input type="text" id="roomId" placeholder="contoh: kelas10ipa1" required>
+        </label>
+        <button type="submit">🚀 Mulai Bermain ✨</button>
+      </form>
     </div>
 
-<script src="js/identitas.js"></script>
+    <!-- Mini Leaderboard -->
+    <div class="index-leaderboard-panel">
+      <h2>🏆 Top 7 Leaderboard</h2>
+      <div id="index-lb-content">
+        <div class="index-lb-empty">Memuat data...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('star-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, stars = [], dustParticles = [];
+      let rotation = 0;
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        initScene();
+      }
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function initScene() {
+        stars = [];
+        dustParticles = [];
+
+        // Background stars
+        for (let i = 0; i < 280; i++) {
+          stars.push({
+            x: rand(0, W), y: rand(0, H),
+            r: rand(0.2, 1.8),
+            a: rand(0.3, 1),
+            twinkleSpeed: rand(0.003, 0.012),
+            dir: Math.random() > 0.5 ? 1 : -1,
+            color: ['255,255,255','200,180,255','180,220,255','255,220,180'][Math.floor(Math.random()*4)]
+          });
+        }
+
+        // Galaxy dust/spiral particles
+        // Galaxy 1 — purple, center bottom-left area
+        addGalaxy(W * 0.18, H * 0.72, 320, 2.2, '#7c3aed', '#c084fc', '#e879f9', 1400);
+        // Galaxy 2 — teal, top-right, smaller
+        addGalaxy(W * 0.82, H * 0.18, 180, 0.6, '#0e7490', '#06b6d4', '#67e8f9', 700);
+        // Galaxy 3 — faint pink, center background
+        addGalaxy(W * 0.5, H * 0.45, 250, 3.5, '#9d174d', '#ec4899', '#f9a8d4', 600, 0.4);
+      }
+
+      function addGalaxy(cx, cy, radius, tilt, c1, c2, c3, count, alphaMult) {
+        alphaMult = alphaMult || 1;
+        const arms = 3;
+        for (let i = 0; i < count; i++) {
+          const arm   = Math.floor(Math.random() * arms);
+          const t     = Math.random();                          // 0=center, 1=edge
+          const r     = Math.pow(t, 0.7) * radius;
+          const angle = (arm / arms) * Math.PI * 2
+                      + t * Math.PI * 4                        // spiral wind
+                      + rand(-0.35, 0.35);                     // spread
+          const spread = rand(0, r * 0.22);
+          const cosT  = Math.cos(tilt);
+          const sinT  = Math.sin(tilt * 0.4);
+          const lx    = Math.cos(angle) * r + rand(-spread, spread);
+          const ly    = Math.sin(angle) * r * 0.38 + rand(-spread * 0.4, spread * 0.4); // flatten
+          const x     = cx + lx * cosT - ly * sinT;
+          const y     = cy + lx * sinT * 0.3 + ly;
+
+          const colors = [c1, c2, c3];
+          const col    = colors[Math.floor(t * 3) % 3];
+          const alpha  = (1 - t * 0.6) * rand(0.15, 0.55) * alphaMult;
+
+          dustParticles.push({
+            x, y,
+            r: rand(0.4, t < 0.25 ? 2.5 : 1.4),
+            color: col,
+            a: alpha,
+            twinkleSpeed: rand(0.001, 0.006),
+            dir: Math.random() > 0.5 ? 1 : -1
+          });
+        }
+
+        // Bright core
+        dustParticles.push({ x: cx, y: cy, r: 18, color: c3, a: 0.06 * alphaMult, isCore: true, coreRadius: 60, cx, cy });
+        dustParticles.push({ x: cx, y: cy, r: 8,  color: '#ffffff', a: 0.12 * alphaMult, isCore: true, coreRadius: 25, cx, cy });
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Deep space bg gradient
+        const bg = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W,H)*0.75);
+        bg.addColorStop(0,   'rgba(14,10,41,1)');
+        bg.addColorStop(0.5, 'rgba(8,5,25,1)');
+        bg.addColorStop(1,   'rgba(3,2,12,1)');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw galaxy glow blobs (radial)
+        [
+          { x: W*0.18, y: H*0.72, r: 340, c: 'rgba(124,58,237,' },
+          { x: W*0.82, y: H*0.18, r: 200, c: 'rgba(6,182,212,'  },
+          { x: W*0.5,  y: H*0.45, r: 260, c: 'rgba(236,72,153,' },
+        ].forEach(function(g) {
+          const grd = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, g.r);
+          grd.addColorStop(0,   g.c + '0.18)');
+          grd.addColorStop(0.4, g.c + '0.08)');
+          grd.addColorStop(1,   g.c + '0)');
+          ctx.fillStyle = grd;
+          ctx.fillRect(0, 0, W, H);
+        });
+
+        // Draw dust/spiral particles
+        dustParticles.forEach(function(p) {
+          if (p.isCore) {
+            const grd = ctx.createRadialGradient(p.cx, p.cy, 0, p.cx, p.cy, p.coreRadius);
+            grd.addColorStop(0, hexToRgba(p.color, p.a));
+            grd.addColorStop(1, hexToRgba(p.color, 0));
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.arc(p.cx, p.cy, p.coreRadius, 0, Math.PI*2);
+            ctx.fill();
+            return;
+          }
+          p.a += p.twinkleSpeed * p.dir * 0.3;
+          if (p.a > 0.7 || p.a < 0.02) p.dir *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fillStyle = hexToRgba(p.color, p.a);
+          ctx.fill();
+        });
+
+        // Draw twinkling stars on top
+        stars.forEach(function(s) {
+          s.a += s.twinkleSpeed * s.dir;
+          if (s.a > 1 || s.a < 0.1) s.dir *= -1;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(' + s.color + ',' + s.a + ')';
+          ctx.fill();
+        });
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      function hexToRgba(hex, a) {
+        const r = parseInt(hex.slice(1,3),16);
+        const g = parseInt(hex.slice(3,5),16);
+        const b = parseInt(hex.slice(5,7),16);
+        return 'rgba('+r+','+g+','+b+','+a+')';
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      drawFrame();
+    })();
+  </script>
+  <script src="js/identitas.js"></script>
 </body>
 </html>

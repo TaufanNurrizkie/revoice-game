@@ -6,23 +6,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RE:VOICE — Pilih Karakter</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+      .cosmic-body {
+        background: radial-gradient(circle at center, #0e0a29 0%, #03020c 100%) !important;
+      }
+      #galaxy-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .character-select-wrap { position: relative; z-index: 2; }
+    </style>
 </head>
 
-<body>
-    <div class="form-wrap" style="max-width:420px;">
+<body class="cosmic-body">
+    <canvas id="galaxy-canvas"></canvas>
+
+    <div class="form-wrap character-select-wrap">
+        <!-- Decorations -->
+        <div class="space-decorations">
+            <!-- Saturn Planet -->
+            <div class="saturn-container">
+                <svg class="planet-svg" viewBox="0 0 100 100" width="80" height="80">
+                    <defs>
+                        <radialGradient id="planetGrad" cx="30%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#bd93f9"/>
+                            <stop offset="55%" stop-color="#7c4dff"/>
+                            <stop offset="100%" stop-color="#311b92"/>
+                        </radialGradient>
+                        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#e040fb" stop-opacity="0.8"/>
+                            <stop offset="50%" stop-color="#b38df7" stop-opacity="0.9"/>
+                            <stop offset="100%" stop-color="#512da8" stop-opacity="0.3"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 5,52 A 46,14 -18 0,1 95,38" fill="none" stroke="url(#ringGrad)" stroke-width="4.5" opacity="0.8"/>
+                    <circle cx="50" cy="50" r="26" fill="url(#planetGrad)" filter="drop-shadow(0px 0px 8px rgba(124, 77, 255, 0.5))"/>
+                    <path d="M 95,38 A 46,14 -18 0,1 5,52" fill="none" stroke="url(#ringGrad)" stroke-width="4.5" filter="drop-shadow(0px 2px 2px rgba(0,0,0,0.5))"/>
+                </svg>
+            </div>
+            <div class="shooting-star star-1"></div>
+            <div class="shooting-star star-2"></div>
+            <div class="shooting-star star-3"></div>
+            <div class="bg-sparkle sparkle-1">✦</div>
+            <div class="bg-sparkle sparkle-2">✦</div>
+        </div>
+
         <div class="eyebrow">RE:VOICE</div>
-        <h1>Pilih Karaktermu</h1>
+        <h1 class="select-title">Pilih Karaktermu <span class="title-sparkle">✦</span></h1>
         <p class="subtitle">Karakter ini yang akan kamu mainkan di dalam labirin.</p>
 
         <div id="character-grid" class="character-grid"></div>
 
-        <button id="btn-lanjut" disabled>Mulai Bermain</button>
+        <button id="btn-lanjut" disabled><span class="btn-icon">🚀</span> Mulai Bermain <span class="btn-sparkle">✨</span></button>
     </div>
 
     <script src="js/characters.js"></script>
     <script>
+        // Galaxy background
         (function () {
-            // Kalau belum isi identitas, balik ke halaman awal
+            const canvas = document.getElementById('galaxy-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H, stars = [], dust = [];
+
+            function rand(a, b) { return Math.random() * (b - a) + a; }
+
+            function hexToRgba(hex, a) {
+                const r = parseInt(hex.slice(1,3),16);
+                const g = parseInt(hex.slice(3,5),16);
+                const b = parseInt(hex.slice(5,7),16);
+                return 'rgba('+r+','+g+','+b+','+a+')';
+            }
+
+            function addGalaxy(cx, cy, radius, tilt, c1, c2, c3, count, alphaMult) {
+                alphaMult = alphaMult || 1;
+                for (let i = 0; i < count; i++) {
+                    const arm   = Math.floor(Math.random() * 3);
+                    const t     = Math.random();
+                    const r     = Math.pow(t, 0.7) * radius;
+                    const angle = (arm / 3) * Math.PI * 2 + t * Math.PI * 4 + rand(-0.35, 0.35);
+                    const spread = rand(0, r * 0.22);
+                    const lx = Math.cos(angle) * r + rand(-spread, spread);
+                    const ly = Math.sin(angle) * r * 0.38 + rand(-spread * 0.4, spread * 0.4);
+                    const x  = cx + lx * Math.cos(tilt) - ly * Math.sin(tilt * 0.4);
+                    const y  = cy + lx * Math.sin(tilt * 0.3) + ly;
+                    const col = [c1,c2,c3][Math.floor(t*3)%3];
+                    dust.push({
+                        x, y,
+                        r: rand(0.4, t < 0.25 ? 2.5 : 1.4),
+                        color: col,
+                        a: (1 - t * 0.6) * rand(0.15, 0.55) * alphaMult,
+                        ts: rand(0.001, 0.006),
+                        dir: Math.random() > 0.5 ? 1 : -1
+                    });
+                }
+                dust.push({ isCore: true, cx, cy, r: 18, color: c3,       a: 0.07*alphaMult, cr: 65 });
+                dust.push({ isCore: true, cx, cy, r: 8,  color: '#ffffff', a: 0.13*alphaMult, cr: 28 });
+            }
+
+            function resize() {
+                W = canvas.width  = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+                stars = [];
+                dust  = [];
+                for (let i = 0; i < 260; i++) {
+                    stars.push({
+                        x: rand(0,W), y: rand(0,H),
+                        r: rand(0.2, 1.7),
+                        a: rand(0.3,1),
+                        ts: rand(0.003,0.012),
+                        dir: Math.random()>0.5?1:-1,
+                        color: ['255,255,255','200,180,255','180,220,255','255,220,180'][Math.floor(Math.random()*4)]
+                    });
+                }
+                addGalaxy(W*0.15, H*0.75, 300, 2.2, '#7c3aed','#c084fc','#e879f9', 1300);
+                addGalaxy(W*0.85, H*0.20, 180, 0.6, '#0e7490','#06b6d4','#67e8f9', 650);
+                addGalaxy(W*0.55, H*0.40, 230, 3.5, '#9d174d','#ec4899','#f9a8d4', 550, 0.4);
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                // deep space bg
+                const bg = ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.75);
+                bg.addColorStop(0,  'rgba(14,10,41,1)');
+                bg.addColorStop(.5, 'rgba(8,5,25,1)');
+                bg.addColorStop(1,  'rgba(3,2,12,1)');
+                ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+                // nebula glows
+                [
+                    {x:W*.15,y:H*.75,r:320,c:'rgba(124,58,237,'},
+                    {x:W*.85,y:H*.20,r:190,c:'rgba(6,182,212,'},
+                    {x:W*.55,y:H*.40,r:240,c:'rgba(236,72,153,'},
+                ].forEach(function(g){
+                    const grd = ctx.createRadialGradient(g.x,g.y,0,g.x,g.y,g.r);
+                    grd.addColorStop(0,  g.c+'0.18)');
+                    grd.addColorStop(.4, g.c+'0.08)');
+                    grd.addColorStop(1,  g.c+'0)');
+                    ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+                });
+                // dust
+                dust.forEach(function(p){
+                    if (p.isCore) {
+                        const grd = ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,p.cr);
+                        grd.addColorStop(0, hexToRgba(p.color,p.a));
+                        grd.addColorStop(1, hexToRgba(p.color,0));
+                        ctx.fillStyle = grd;
+                        ctx.beginPath(); ctx.arc(p.cx,p.cy,p.cr,0,Math.PI*2); ctx.fill();
+                        return;
+                    }
+                    p.a += p.ts * p.dir * 0.3;
+                    if (p.a > 0.65 || p.a < 0.02) p.dir *= -1;
+                    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                    ctx.fillStyle = hexToRgba(p.color,p.a); ctx.fill();
+                });
+                // stars
+                stars.forEach(function(s){
+                    s.a += s.ts * s.dir;
+                    if (s.a>1||s.a<0.1) s.dir*=-1;
+                    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+                    ctx.fillStyle='rgba('+s.color+','+s.a+')'; ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            window.addEventListener('resize', resize);
+            draw();
+        })();
+    </script>
+    <script>
+        (function () {
             if (!sessionStorage.getItem('revoice_sessionId')) {
                 window.location.href = 'index.html';
                 return;
@@ -34,10 +189,15 @@
 
             window.CHARACTERS.forEach(function (char) {
                 const card = document.createElement('div');
-                card.className = 'character-card';
+                card.className = 'character-card char-' + char.id;
                 card.innerHTML =
-                    '<div class="character-thumb-wrap"><canvas class="character-thumb" width="64" height="64"></canvas></div>' +
-                    '<div class="character-name">' + char.nama + '</div>';
+                    '<span class="corner-star tl">✦</span>' +
+                    '<span class="corner-star tr">✦</span>' +
+                    '<div class="character-thumb-wrap">' +
+                        '<div class="foot-glow"></div>' +
+                        '<canvas class="character-thumb" width="64" height="64"></canvas>' +
+                    '</div>' +
+                    '<div class="character-name">✦ ' + char.nama + ' ✦</div>';
 
                 card.addEventListener('click', function () {
                     document.querySelectorAll('.character-card').forEach(function (c) { c.classList.remove('selected'); });
@@ -48,7 +208,6 @@
 
                 grid.appendChild(card);
 
-                // gambar thumbnail pose idle (frame col=0,row=0 dari sprite sheet)
                 const canvas = card.querySelector('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();

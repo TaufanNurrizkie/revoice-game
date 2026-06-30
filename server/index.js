@@ -17,7 +17,7 @@ const io = new Server(server, {
   cors: { origin: '*' } // longgarkan dulu untuk development, perketat saat production
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 app.use(express.json());
 
