@@ -93,64 +93,45 @@ window.Maze = (function () {
 
   function draw(ctx) {
     // 1. Draw Space Background
-    ctx.fillStyle = "#0B1026";
+    ctx.fillStyle = "#070412";
     ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
 
-    // Nebula effect
-    const g1 = ctx.createRadialGradient(COLS*TILE*0.3, ROWS*TILE*0.3, 0, COLS*TILE*0.3, ROWS*TILE*0.3, COLS*TILE*0.8);
-    g1.addColorStop(0, "rgba(77, 163, 255, 0.15)");
-    g1.addColorStop(1, "rgba(77, 163, 255, 0)");
-    ctx.fillStyle = g1;
-    ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
+    // Nebula glow blobs
+    const glows = [
+      { x: COLS*TILE*0.2, y: ROWS*TILE*0.25, r: COLS*TILE*0.7, c: "rgba(124,58,237," },
+      { x: COLS*TILE*0.8, y: ROWS*TILE*0.75, r: COLS*TILE*0.6, c: "rgba(6,182,212,"  },
+      { x: COLS*TILE*0.5, y: ROWS*TILE*0.5,  r: COLS*TILE*0.5, c: "rgba(236,72,153," },
+    ];
+    glows.forEach(function(g) {
+      const grd = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, g.r);
+      grd.addColorStop(0,   g.c + "0.10)");
+      grd.addColorStop(0.5, g.c + "0.04)");
+      grd.addColorStop(1,   g.c + "0)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
+    });
 
-    const g2 = ctx.createRadialGradient(COLS*TILE*0.7, ROWS*TILE*0.8, 0, COLS*TILE*0.7, ROWS*TILE*0.8, COLS*TILE*0.7);
-    g2.addColorStop(0, "rgba(176, 102, 255, 0.12)");
-    g2.addColorStop(1, "rgba(176, 102, 255, 0)");
-    ctx.fillStyle = g2;
-    ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE);
-
-    // Global stars
+    // Twinkling stars
     for (let i = 0; i < 45; i++) {
       const sx = (Math.sin(i * 123.45) * 0.5 + 0.5) * (COLS * TILE);
       const sy = (Math.cos(i * 321.12) * 0.5 + 0.5) * (ROWS * TILE);
-      const size = (Math.sin(i * 45) * 0.5 + 0.5) * 1.2 + 0.5;
-      
+      const size = (Math.sin(i * 45) * 0.5 + 0.5) * 1.2 + 0.4;
       const t = performance.now() / 1500 + i;
       const twinkle = Math.sin(t * 3) * 0.5 + 0.5;
-      
-      let starColor = "#FFFFFF";
-      if (i % 3 === 0) starColor = "#FFDB66";
-      if (i % 4 === 0) starColor = "#6CFFE8";
-      if (i % 5 === 0) starColor = "#B066FF";
-      
-      ctx.globalAlpha = 0.2 + twinkle * 0.8;
-      ctx.fillStyle = starColor;
+      const colors = ["255,255,255","255,219,102","108,255,232","176,102,255"];
+      ctx.globalAlpha = 0.15 + twinkle * 0.75;
+      ctx.fillStyle = "rgb(" + colors[i % colors.length] + ")";
       ctx.beginPath();
       ctx.arc(sx, sy, size, 0, Math.PI * 2);
       ctx.fill();
-      
-      if (twinkle > 0.7 && size > 1) {
-        ctx.shadowColor = starColor;
-        ctx.shadowBlur = 4;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
     }
     ctx.globalAlpha = 1.0;
 
-    // Helper to draw tile images cropped to remove AI-generated borders
     function drawTileImage(img, col, row) {
         if (!img || !img.complete || img.width === 0) return;
-        const offset = 0; // No overlap, perfect uniform size
-        const cropX = img.width * 0.12;
-        const cropY = img.height * 0.12;
-        const cropW = img.width * 0.76;
-        const cropH = img.height * 0.76;
-        ctx.drawImage(
-           img, 
-           cropX, cropY, cropW, cropH, 
-           col * TILE - offset, row * TILE - offset, TILE + offset*2, TILE + offset*2
-        );
+        const cropX = img.width * 0.12,  cropY = img.height * 0.12;
+        const cropW = img.width * 0.76,  cropH = img.height * 0.76;
+        ctx.drawImage(img, cropX, cropY, cropW, cropH, col * TILE, row * TILE, TILE, TILE);
     }
 
     // 2. Draw Maze Grid Using Assets
@@ -166,48 +147,56 @@ window.Maze = (function () {
           continue; 
         }
 
-        if (val === 1) { // Wall (Kotak Biasa / Border)
-          let isBorder = (r === 0 || r === ROWS - 1 || c === 0 || c === COLS - 1);
+        if (val === 1) { // Wall
+          const isBorder = (r === 0 || r === ROWS-1 || c === 0 || c === COLS-1);
           const seed = (c * 31 + r * 17) % 25;
-          
+
           let tileType = "biasa";
           if (!isBorder) {
-              if (seed === 0 || seed === 1) tileType = "planet";
-              else if (seed === 2 || seed === 3) tileType = "bintang";
-              else if (seed === 4 || seed === 5) tileType = "boost";
-          }
-          
-          if (images[tileType] && images[tileType].complete) {
-             drawTileImage(images[tileType], c, r);
-             // Tint border purple since tile_border generation failed and we reuse biasa
-             if (isBorder && tileType === "biasa") {
-                ctx.fillStyle = "rgba(176, 102, 255, 0.4)";
-                const offset = 0;
-                ctx.fillRect(c * TILE - offset, r * TILE - offset, TILE + offset*2, TILE + offset*2);
-             }
+            if (seed === 0 || seed === 1) tileType = "planet";
+            else if (seed === 2 || seed === 3) tileType = "bintang";
+            else if (seed === 4 || seed === 5) tileType = "boost";
           }
 
-        } else if (val === 2) { // Water (Sci-fi energy)
-          ctx.fillStyle = "#00E5FF";
-          ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          ctx.strokeStyle = "#FFFFFF";
+          if (images[tileType] && images[tileType].complete && images[tileType].width > 0) {
+            drawTileImage(images[tileType], c, r);
+          } else {
+            // fallback solid
+            ctx.fillStyle = isBorder ? "#1a0a3a" : "#150d30";
+            ctx.fillRect(c*TILE, r*TILE, TILE, TILE);
+          }
+          // border tint ungu
+          if (isBorder) {
+            ctx.fillStyle = "rgba(139,92,246,0.35)";
+            ctx.fillRect(c*TILE, r*TILE, TILE, TILE);
+          }
+
+        } else if (val === 2) { // Water / energy barrier
+          ctx.fillStyle = "#001a2e";
+          ctx.fillRect(c*TILE, r*TILE, TILE, TILE);
+          const wt = performance.now() / 600 + c * 0.5;
+          ctx.strokeStyle = "rgba(0,229,255," + (0.5 + Math.sin(wt)*0.3) + ")";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(c * TILE, r * TILE + TILE/2);
-          ctx.lineTo(c * TILE + TILE, r * TILE + TILE/2);
+          ctx.moveTo(c*TILE, r*TILE + TILE/2 + Math.sin(wt)*3);
+          ctx.lineTo(c*TILE + TILE, r*TILE + TILE/2 + Math.sin(wt+1)*3);
           ctx.stroke();
-        } else if (val === 3) { // Bridge (Sci-fi bridge)
-          ctx.fillStyle = "#4DA3FF";
-          ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
-          ctx.strokeStyle = "#00E5FF";
+
+        } else if (val === 3) { // Bridge
+          ctx.fillStyle = "#0a2040";
+          ctx.fillRect(c*TILE, r*TILE, TILE, TILE);
+          ctx.strokeStyle = "rgba(77,163,255,0.7)";
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
-          ctx.moveTo(c * TILE + TILE * 0.2, r * TILE);
-          ctx.lineTo(c * TILE + TILE * 0.2, r * TILE + TILE);
-          ctx.moveTo(c * TILE + TILE * 0.8, r * TILE);
-          ctx.lineTo(c * TILE + TILE * 0.8, r * TILE + TILE);
+          ctx.moveTo(c*TILE + TILE*0.25, r*TILE);
+          ctx.lineTo(c*TILE + TILE*0.25, r*TILE + TILE);
+          ctx.moveTo(c*TILE + TILE*0.75, r*TILE);
+          ctx.lineTo(c*TILE + TILE*0.75, r*TILE + TILE);
           ctx.stroke();
-        } else if (val === 4) { // Door (Tujuan / Goal - Orange)
-          if (images.tujuan && images.tujuan.complete) {
-             drawTileImage(images.tujuan, c, r);
+
+        } else if (val === 4) { // Goal / door
+          if (images.tujuan && images.tujuan.complete && images.tujuan.width > 0) {
+            drawTileImage(images.tujuan, c, r);
           }
         }
       }

@@ -7,109 +7,134 @@ window.Babak2 = (function () {
   function drawFruit(ctx, x, y, size, type) {
     ctx.save();
     ctx.translate(x, y);
-    
-    // Draw brown stem
-    ctx.strokeStyle = "#5a3a22";
-    ctx.lineWidth = size * 0.12;
-    ctx.lineCap = "round";
+
+    const col  = type === "orange" ? "#FFD700" : "#00E5FF";
+    const col2 = type === "orange" ? "#FFA500" : "#0097A7";
+    const glow = type === "orange" ? "rgba(255,215,0,0.4)" : "rgba(0,229,255,0.4)";
+
+    // Pulse glow
+    const grd = ctx.createRadialGradient(0, 0, 1, 0, 0, size * 0.9);
+    grd.addColorStop(0, glow);
+    grd.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = grd;
     ctx.beginPath();
-    ctx.moveTo(0, -size * 0.25);
-    ctx.quadraticCurveTo(size * 0.1, -size * 0.5, size * 0.18, -size * 0.45);
-    ctx.stroke();
-    
-    // Draw green leaf
-    ctx.fillStyle = "#417a4c";
-    ctx.beginPath();
-    ctx.ellipse(size * 0.15, -size * 0.4, size * 0.16, size * 0.08, Math.PI / 4, 0, Math.PI * 2);
+    ctx.arc(0, 0, size * 0.9, 0, Math.PI * 2);
     ctx.fill();
-    
-    if (type === "orange") {
-      // Draw warm orange apple/fruit (Babak 1)
-      ctx.fillStyle = "#e76f51"; // cute warm orange-red apple
-      ctx.beginPath();
-      ctx.arc(-size * 0.15, 0, size * 0.38, 0, Math.PI * 2);
-      ctx.arc(size * 0.15, 0, size * 0.38, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Bottom brown notch
-      ctx.fillStyle = "#5a3a22";
-      ctx.beginPath();
-      ctx.arc(0, size * 0.34, size * 0.06, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      // Draw cool teal magic forest berry (Babak 2)
-      ctx.fillStyle = "#2a9d8f"; // soft teal magic berry
-      ctx.beginPath();
-      ctx.arc(-size * 0.14, -size * 0.1, size * 0.32, 0, Math.PI * 2);
-      ctx.arc(size * 0.14, -size * 0.1, size * 0.32, 0, Math.PI * 2);
-      ctx.arc(0, size * 0.16, size * 0.32, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Bottom notch
-      ctx.fillStyle = "#1b4d45";
-      ctx.beginPath();
-      ctx.arc(0, size * 0.34, size * 0.06, 0, Math.PI * 2);
-      ctx.fill();
+
+    // 5-point star
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const outerA = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+      const innerA = outerA + Math.PI / 5;
+      const ox = Math.cos(outerA) * size * 0.5;
+      const oy = Math.sin(outerA) * size * 0.5;
+      const ix = Math.cos(innerA) * size * 0.22;
+      const iy = Math.sin(innerA) * size * 0.22;
+      i === 0 ? ctx.moveTo(ox, oy) : ctx.lineTo(ox, oy);
+      ctx.lineTo(ix, iy);
     }
-    
-    // Glossy highlight
-    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
-    ctx.beginPath();
-    ctx.ellipse(-size * 0.12, -size * 0.15, size * 0.12, size * 0.06, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.closePath();
     ctx.fill();
-    
+
+    // Inner shadow facet
+    ctx.fillStyle = col2;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const outerA = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+      const innerA = outerA + Math.PI / 5;
+      const ox = Math.cos(outerA) * size * 0.28;
+      const oy = Math.sin(outerA) * size * 0.28;
+      const ix = Math.cos(innerA) * size * 0.13;
+      const iy = Math.sin(innerA) * size * 0.13;
+      i === 0 ? ctx.moveTo(ox, oy) : ctx.lineTo(ox, oy);
+      ctx.lineTo(ix, iy);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Shine
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.1, -size * 0.18, size * 0.1, size * 0.05, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.restore();
   }
 
   function drawBasket(ctx, px, py, isCurrentZona, glowColor) {
-    // Ground shadow / aura glow
-    const glowRadius = TILE * 0.8 + Math.sin(performance.now() / 100) * 1.5;
+    // Ground glow
+    const glowRadius = TILE * 0.85 + Math.sin(performance.now() / 120) * 1.5;
     const grad = ctx.createRadialGradient(px, py + TILE * 0.15, 2, px, py + TILE * 0.15, glowRadius);
-    grad.addColorStop(0, isCurrentZona ? glowColor : "rgba(255, 255, 255, 0.15)");
-    grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    grad.addColorStop(0, isCurrentZona ? glowColor : "rgba(255,255,255,0.1)");
+    grad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(px, py + TILE * 0.15, glowRadius, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.save();
-    ctx.translate(px, py + TILE * 0.05);
-    
-    // Woven Basket Base
-    ctx.fillStyle = "#8a6642"; // light wood/wicker brown
+    ctx.translate(px, py - TILE * 0.05);
+
+    // --- Rocket body ---
+    ctx.fillStyle = "#dce8f5";
     ctx.beginPath();
-    ctx.moveTo(-9, -2);
-    ctx.lineTo(9, -2);
-    ctx.lineTo(6, 7);
-    ctx.lineTo(-6, 7);
+    ctx.moveTo(0, -14);
+    ctx.bezierCurveTo(6, -8, 7, 0, 7, 8);
+    ctx.lineTo(-7, 8);
+    ctx.bezierCurveTo(-7, 0, -6, -8, 0, -14);
     ctx.closePath();
     ctx.fill();
-    
-    // Basket rim (top border)
-    ctx.fillStyle = "#6e4e2f"; // darker brown
-    ctx.fillRect(-10, -5, 20, 3);
-    
-    // Woven pattern lines
-    ctx.strokeStyle = "#4a3320";
-    ctx.lineWidth = 1;
+
+    // Window
+    ctx.fillStyle = isCurrentZona ? "#7df9ff" : "#3a8fc7";
     ctx.beginPath();
-    // Vertical ribs
-    ctx.moveTo(-6, -2); ctx.lineTo(-4, 7);
-    ctx.moveTo(-2, -2); ctx.lineTo(-1, 7);
-    ctx.moveTo(2, -2);  ctx.lineTo(1, 7);
-    ctx.moveTo(6, -2);  ctx.lineTo(4, 7);
-    // Horizontal rings
-    ctx.moveTo(-8, 1);  ctx.lineTo(8, 1);
-    ctx.moveTo(-7, 4);  ctx.lineTo(7, 4);
+    ctx.arc(0, -1, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#1a4a6e";
+    ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Draw some straw/green leaves inside the basket
-    ctx.fillStyle = "#417a4c";
+    // Stripe
+    ctx.fillStyle = "#e84545";
+    ctx.fillRect(-7, 4, 14, 2.5);
+
+    // Left fin
+    ctx.fillStyle = "#b0c8e8";
     ctx.beginPath();
-    ctx.ellipse(-3, -6, 4, 2, -Math.PI/6, 0, Math.PI*2);
-    ctx.ellipse(4, -6, 4, 2, Math.PI/6, 0, Math.PI*2);
+    ctx.moveTo(-7, 4);
+    ctx.lineTo(-13, 10);
+    ctx.lineTo(-7, 10);
+    ctx.closePath();
     ctx.fill();
-    
+
+    // Right fin
+    ctx.beginPath();
+    ctx.moveTo(7, 4);
+    ctx.lineTo(13, 10);
+    ctx.lineTo(7, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // Nozzle
+    ctx.fillStyle = "#7a8fa8";
+    ctx.fillRect(-4, 8, 8, 3);
+
+    // Exhaust flame (animated)
+    const flameH = 4 + Math.sin(performance.now() / 80) * 2;
+    const flamGrd = ctx.createLinearGradient(0, 11, 0, 11 + flameH + 4);
+    flamGrd.addColorStop(0, "#fff176");
+    flamGrd.addColorStop(0.5, "#ff7043");
+    flamGrd.addColorStop(1, "rgba(255,112,67,0)");
+    ctx.fillStyle = flamGrd;
+    ctx.beginPath();
+    ctx.moveTo(-3.5, 11);
+    ctx.lineTo(3.5, 11);
+    ctx.lineTo(1, 11 + flameH + 4);
+    ctx.lineTo(-1, 11 + flameH + 4);
+    ctx.closePath();
+    ctx.fill();
+
     ctx.restore();
   }
 

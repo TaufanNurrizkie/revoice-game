@@ -146,7 +146,7 @@ window.PlayerModule = (function () {
         self.y = startY + (targetY - startY) * t;
         
         // Cycle walking animation frames (0 or 1)
-        self.animFrame = Math.floor(t * 2) % 2;
+        self.animFrame = Math.round(t) % 2;
       }
     }
 
@@ -191,7 +191,7 @@ window.PlayerModule = (function () {
         } else {
           p.x = p.startX + (p.targetX - p.startX) * t;
           p.y = p.startY + (p.targetY - p.startY) * t;
-          p.animFrame = Math.floor(t * 2) % 2;
+          p.animFrame = Math.round(t) % 2;
         }
       } else {
         p.animFrame = 0;
@@ -231,7 +231,11 @@ window.PlayerModule = (function () {
       drawBlob(ctx, x, y, fallbackColor || "#d9534f");
       return;
     }
-    const seq = FRAMES[facing] || FRAMES.idle;
+    const charData = window.getCharacterById(characterId);
+    const frameSet = (charData.framesOverride && charData.framesOverride[facing])
+      ? charData.framesOverride[facing]
+      : (FRAMES[facing] || FRAMES.idle);
+    const seq = frameSet;
     const frame = seq[animFrame % seq.length];
 
     ctx.drawImage(
