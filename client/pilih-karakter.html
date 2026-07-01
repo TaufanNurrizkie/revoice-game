@@ -58,7 +58,11 @@
         <h1 class="select-title">Pilih Karaktermu <span class="title-sparkle">✦</span></h1>
         <p class="subtitle">Karakter ini yang akan kamu mainkan di dalam labirin.</p>
 
-        <div id="character-grid" class="character-grid"></div>
+        <div class="carousel-container" style="display: flex; align-items: center; justify-content: space-between; margin: 24px 0;">
+            <button id="btn-prev" class="carousel-nav-btn" style="background: transparent; border: none; color: #bd93f9; font-size: 32px; cursor: pointer; padding: 10px; transition: transform 0.2s;">◀</button>
+            <div id="character-carousel" class="character-carousel" style="flex: 1; display: flex; justify-content: center; position: relative;"></div>
+            <button id="btn-next" class="carousel-nav-btn" style="background: transparent; border: none; color: #bd93f9; font-size: 32px; cursor: pointer; padding: 10px; transition: transform 0.2s;">▶</button>
+        </div>
 
         <button id="btn-lanjut" disabled><span class="btn-icon">🚀</span> Mulai Bermain <span class="btn-sparkle">✨</span></button>
     </div>
@@ -183,13 +187,23 @@
                 return;
             }
 
-            const grid = document.getElementById('character-grid');
+            const carousel = document.getElementById('character-carousel');
             const lanjutBtn = document.getElementById('btn-lanjut');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            let currentIndex = 0;
             let selectedId = null;
 
-            window.CHARACTERS.forEach(function (char) {
+            function renderCharacter() {
+                carousel.innerHTML = '';
+                const char = window.CHARACTERS[currentIndex];
+                
                 const card = document.createElement('div');
-                card.className = 'character-card char-' + char.id;
+                // Beri custom class jika ada warna khusus, fallback ke default selected style
+                const charClass = ['cat', 'frog', 'cow', 'shiba', 'panda', 'rabbit', 'bear', 'hedgehog', 'penguin', 'squirrel'].includes(char.id) ? 'char-' + char.id : 'char-cat';
+                card.className = 'character-card selected ' + charClass;
+                card.style.width = '100%';
+                card.style.maxWidth = '200px';
                 card.innerHTML =
                     '<span class="corner-star tl">✦</span>' +
                     '<span class="corner-star tr">✦</span>' +
@@ -199,14 +213,9 @@
                     '</div>' +
                     '<div class="character-name">✦ ' + char.nama + ' ✦</div>';
 
-                card.addEventListener('click', function () {
-                    document.querySelectorAll('.character-card').forEach(function (c) { c.classList.remove('selected'); });
-                    card.classList.add('selected');
-                    selectedId = char.id;
-                    lanjutBtn.disabled = false;
-                });
-
-                grid.appendChild(card);
+                carousel.appendChild(card);
+                selectedId = char.id;
+                lanjutBtn.disabled = false;
 
                 const canvas = card.querySelector('canvas');
                 const ctx = canvas.getContext('2d');
@@ -216,7 +225,19 @@
                     ctx.drawImage(img, 0, 0, 64, 64, 0, 0, 64, 64);
                 };
                 img.src = char.sprite;
+            }
+
+            btnPrev.addEventListener('click', function () {
+                currentIndex = (currentIndex - 1 + window.CHARACTERS.length) % window.CHARACTERS.length;
+                renderCharacter();
             });
+
+            btnNext.addEventListener('click', function () {
+                currentIndex = (currentIndex + 1) % window.CHARACTERS.length;
+                renderCharacter();
+            });
+
+            renderCharacter();
 
             lanjutBtn.addEventListener('click', function () {
                 if (!selectedId) return;

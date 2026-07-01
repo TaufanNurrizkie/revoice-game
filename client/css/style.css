@@ -571,6 +571,78 @@ table.data-table tr:hover, table.lb-table tr:hover {
   background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.5) 0%, rgba(59, 130, 246, 0) 70%);
 }
 
+.character-card.char-panda.selected {
+  border-color: #f8fafc !important;
+  background: rgba(248, 250, 252, 0.08) !important;
+  box-shadow: 0 0 18px rgba(248, 250, 252, 0.4) !important;
+}
+.character-card.char-panda:hover { border-color: rgba(248, 250, 252, 0.5) !important; }
+.character-card.char-panda .character-name { color: #f1f5f9; }
+.character-card.char-panda.selected .corner-star { color: #f8fafc; }
+.character-card.char-panda.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(248, 250, 252, 0.5) 0%, rgba(248, 250, 252, 0) 70%);
+}
+
+.character-card.char-rabbit.selected {
+  border-color: #f472b6 !important;
+  background: rgba(244, 114, 182, 0.08) !important;
+  box-shadow: 0 0 18px rgba(244, 114, 182, 0.4) !important;
+}
+.character-card.char-rabbit:hover { border-color: rgba(244, 114, 182, 0.5) !important; }
+.character-card.char-rabbit .character-name { color: #fbcfe8; }
+.character-card.char-rabbit.selected .corner-star { color: #f472b6; }
+.character-card.char-rabbit.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(244, 114, 182, 0.5) 0%, rgba(244, 114, 182, 0) 70%);
+}
+
+.character-card.char-bear.selected {
+  border-color: #a16207 !important;
+  background: rgba(161, 98, 7, 0.08) !important;
+  box-shadow: 0 0 18px rgba(161, 98, 7, 0.4) !important;
+}
+.character-card.char-bear:hover { border-color: rgba(161, 98, 7, 0.5) !important; }
+.character-card.char-bear .character-name { color: #fef08a; }
+.character-card.char-bear.selected .corner-star { color: #a16207; }
+.character-card.char-bear.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(161, 98, 7, 0.5) 0%, rgba(161, 98, 7, 0) 70%);
+}
+
+.character-card.char-hedgehog.selected {
+  border-color: #9333ea !important;
+  background: rgba(147, 51, 234, 0.08) !important;
+  box-shadow: 0 0 18px rgba(147, 51, 234, 0.4) !important;
+}
+.character-card.char-hedgehog:hover { border-color: rgba(147, 51, 234, 0.5) !important; }
+.character-card.char-hedgehog .character-name { color: #d8b4fe; }
+.character-card.char-hedgehog.selected .corner-star { color: #9333ea; }
+.character-card.char-hedgehog.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(147, 51, 234, 0.5) 0%, rgba(147, 51, 234, 0) 70%);
+}
+
+.character-card.char-penguin.selected {
+  border-color: #0ea5e9 !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+  box-shadow: 0 0 18px rgba(14, 165, 233, 0.4) !important;
+}
+.character-card.char-penguin:hover { border-color: rgba(14, 165, 233, 0.5) !important; }
+.character-card.char-penguin .character-name { color: #bae6fd; }
+.character-card.char-penguin.selected .corner-star { color: #0ea5e9; }
+.character-card.char-penguin.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.5) 0%, rgba(14, 165, 233, 0) 70%);
+}
+
+.character-card.char-squirrel.selected {
+  border-color: #d97706 !important;
+  background: rgba(217, 119, 6, 0.08) !important;
+  box-shadow: 0 0 18px rgba(217, 119, 6, 0.4) !important;
+}
+.character-card.char-squirrel:hover { border-color: rgba(217, 119, 6, 0.5) !important; }
+.character-card.char-squirrel .character-name { color: #fde68a; }
+.character-card.char-squirrel.selected .corner-star { color: #d97706; }
+.character-card.char-squirrel.selected .foot-glow {
+  background: radial-gradient(ellipse at center, rgba(217, 119, 6, 0.5) 0%, rgba(217, 119, 6, 0) 70%);
+}
+
 .character-thumb-wrap {
   display: flex;
   justify-content: center;

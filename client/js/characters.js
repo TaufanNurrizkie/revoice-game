@@ -9,18 +9,18 @@
 // berbeda dari default. Lihat FRAMES di player.js untuk format default.
 
 window.CHARACTERS = [
-  { id: "cat",   nama: "Kucing", sprite: "assets/sprites/cat-player.png",
-    // Cat: r1c2/r1c3 = kiri, r2c0/r2c1 = kanan (terbalik dari default)
-    framesOverride: {
-      left:  [{ col: 2, row: 1 }, { col: 3, row: 1 }],
-      right: [{ col: 0, row: 2 }, { col: 1, row: 2 }],
-    },
-  },
+  { id: "cat",   nama: "Kucing", sprite: "assets/sprites/cat-player.png" },
   { id: "frog",  nama: "Kodok",  sprite: "assets/sprites/frog-player.png" },
   { id: "cow",   nama: "Sapi",   sprite: "assets/sprites/cow-player.png" },
   {
     id: "shiba", nama: "Shiba",  sprite: "assets/sprites/shiba-player.png",
   },
+  { id: "panda", nama: "Panda", sprite: "assets/sprites/panda-player.png" },
+  { id: "rabbit", nama: "Kelinci", sprite: "assets/sprites/rabbit-player.png" },
+  { id: "bear", nama: "Beruang", sprite: "assets/sprites/bear-player.png" },
+  { id: "hedgehog", nama: "Landak", sprite: "assets/sprites/hedgehog-player.png" },
+  { id: "penguin", nama: "Penguin", sprite: "assets/sprites/penguin-player.png" },
+  { id: "squirrel", nama: "Tupai", sprite: "assets/sprites/squirrel-player.png" },
 ];
 
 window.getCharacterById = function (id) {
