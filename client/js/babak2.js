@@ -141,18 +141,53 @@ window.Babak2 = (function () {
   const orbImg = new Image();
   orbImg.src = "assets/sprites/orb-teal.png";
 
-  const SOAL_LIST = [
+  const SOAL_POOL = [
     { kalimat: "Aku lagi overthinking tentang masa depan.", inggris: "overthinking", indo: "Berpikir Berlebih" },
     { kalimat: "Dia selalu support aku.", inggris: "support", indo: "Mendukung" },
     { kalimat: "Aku nggak setuju sama statement itu.", inggris: "statement", indo: "Pernyataan" },
     { kalimat: "Aku suka vibes tempat ini.", inggris: "vibes", indo: "Suasana" },
-    { kalimat: "Dia meliki banyak experience di bidang itu.", inggris: "experience", indo: "Pengalaman" },
+    { kalimat: "Dia memiliki banyak experience di bidang itu.", inggris: "experience", indo: "Pengalaman" },
     { kalimat: "Media sosial memberi influence besar pada remaja.", inggris: "influence", indo: "Pengaruh" },
     { kalimat: "Dia memiliki mindset yang positif.", inggris: "mindset", indo: "Pola Pikir" },
     { kalimat: "Aku prefer belajar malam.", inggris: "prefer", indo: "Memilih" },
     { kalimat: "Dia selalu kasih feedback yang bagus.", inggris: "feedback", indo: "Umpan Balik" },
-    { kalimat: "Aku struggle buat konsisten belajar setiap hari.", inggris: "struggle", indo: "Kesusahan" }
+    { kalimat: "Aku struggle buat konsisten belajar setiap hari.", inggris: "struggle", indo: "Kesusahan" },
+    { kalimat: "Kita perlu update sistem ini.", inggris: "update", indo: "Perbarui" },
+    { kalimat: "Dia punya skill komunikasi yang bagus.", inggris: "skill", indo: "Kemampuan" },
+    { kalimat: "Aku mau upgrade diri aku tahun ini.", inggris: "upgrade", indo: "Tingkatkan" },
+    { kalimat: "Situasinya bikin aku stress banget.", inggris: "stress", indo: "Tekanan" },
+    { kalimat: "Kita harus manage waktu dengan baik.", inggris: "manage", indo: "Kelola" },
+    { kalimat: "Proyek ini butuh planning yang matang.", inggris: "planning", indo: "Perencanaan" },
+    { kalimat: "Dia punya attitude yang profesional.", inggris: "attitude", indo: "Sikap" },
+    { kalimat: "Aku butuh challenge baru buat berkembang.", inggris: "challenge", indo: "Tantangan" },
+    { kalimat: "Mereka butuh teamwork yang solid.", inggris: "teamwork", indo: "Kerja Tim" },
+    { kalimat: "Aku pengen achieve semua target tahun ini.", inggris: "achieve", indo: "Mencapai" },
+    { kalimat: "Kamu harus commit sama keputusan yang udah dibuat.", inggris: "commit", indo: "Berkomitmen" },
+    { kalimat: "Dia selalu deliver hasil kerja tepat waktu.", inggris: "deliver", indo: "Menyerahkan" },
+    { kalimat: "Aku mau explore lebih banyak peluang baru.", inggris: "explore", indo: "Menjelajahi" },
+    { kalimat: "Kita perlu focus sama tujuan utama kita.", inggris: "focus", indo: "Fokus" },
+    { kalimat: "Dia kasih impact besar buat timnya.", inggris: "impact", indo: "Dampak" },
+    { kalimat: "Aku pengen improve kemampuan public speaking.", inggris: "improve", indo: "Meningkatkan" },
+    { kalimat: "Kamu harus punya initiative buat mulai duluan.", inggris: "initiative", indo: "Inisiatif" },
+    { kalimat: "Aku mau invest waktu buat belajar hal baru.", inggris: "invest", indo: "Menginvestasikan" },
+    { kalimat: "Dia selalu maintain hubungan baik sama klien.", inggris: "maintain", indo: "Menjaga" },
+    { kalimat: "Kita perlu network lebih luas di industri ini.", inggris: "network", indo: "Jaringan" },
+    { kalimat: "Aku harus organize jadwal biar lebih rapi.", inggris: "organize", indo: "Mengatur" },
+    { kalimat: "Dia punya passion yang kuat di bidang seni.", inggris: "passion", indo: "Semangat" },
+    { kalimat: "Kamu perlu reflect diri setiap akhir minggu.", inggris: "reflect", indo: "Merenungkan" },
+    { kalimat: "Aku mau share pengalaman ini ke temen-temen.", inggris: "share", indo: "Berbagi" },
+    { kalimat: "Dia selalu solve masalah dengan tenang.", inggris: "solve", indo: "Memecahkan" },
+    { kalimat: "Kita perlu track progress kita setiap hari.", inggris: "track", indo: "Melacak" },
+    { kalimat: "Aku mau transform cara belajar aku sepenuhnya.", inggris: "transform", indo: "Mengubah" },
+    { kalimat: "Dia always try yang terbaik dalam setiap situasi.", inggris: "try", indo: "Berusaha" },
+    { kalimat: "Kamu harus validate ide kamu sebelum eksekusi.", inggris: "validate", indo: "Memvalidasi" },
+    { kalimat: "Aku pengen volunteer di kegiatan sosial.", inggris: "volunteer", indo: "Sukarela" },
   ];
+
+  // Ambil 10 soal acak dari pool
+  function pickRandom(pool, n) {
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+  }
 
   // Acak urutan soal
   let questions = [];
@@ -195,12 +230,8 @@ window.Babak2 = (function () {
   function init() {
     window.Maze.loadPattern(pattern);
 
-    // Siapkan soal (acak urutan)
-    questions = [...SOAL_LIST];
-    for (let i = questions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [questions[i], questions[j]] = [questions[j], questions[i]];
-    }
+    // Siapkan soal (ambil 10 acak dari pool)
+    questions = pickRandom(SOAL_POOL, 10);
 
     // Siapkan bola jawaban (acak letak)
     let answers = [...questions];

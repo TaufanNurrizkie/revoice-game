@@ -128,6 +128,14 @@
     <div id="popup-alert" style="display: none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(185,28,28,0.9); color: white; padding: 8px 16px; border-radius: 20px; z-index: 200; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 1px solid rgba(255,100,100,0.4);">
       <span id="popup-alert-msg">Pesan</span>
     </div>
+
+    <!-- Game Over Popup -->
+    <div id="popup-gameover" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 320px; background: rgba(13,5,30,0.98); padding: 28px 20px; border: 2px solid rgba(220,38,38,0.7); border-radius: 16px; z-index: 300; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; box-shadow: 0 0 40px rgba(220,38,38,0.4);">
+      <div style="font-size: 40px; margin-bottom: 8px;">💀</div>
+      <h2 style="color: #f87171; margin: 0 0 8px 0; font-size: 22px;">Game Over</h2>
+      <p style="font-size: 13px; color: #c4d0f0; margin: 0 0 20px 0;">Nyawamu habis! Mulai lagi dari awal.</p>
+      <button id="btn-restart" style="width: 100%; padding: 10px; font-size: 14px; font-weight: bold; background: linear-gradient(135deg,#7f1d1d,#3b0a0a); color: #fca5a5; border: 1.5px solid rgba(248,113,113,0.5); border-radius: 30px; cursor: pointer;">🔄 Mulai Ulang</button>
+    </div>
   </div>
 
   <div id="controls-hint">

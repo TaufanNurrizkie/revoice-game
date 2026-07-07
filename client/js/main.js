@@ -18,6 +18,9 @@
   canvas.width = window.Maze.COLS * window.Maze.TILE;
   canvas.height = window.Maze.ROWS * window.Maze.TILE;
 
+  const popupGameOver = document.getElementById("popup-gameover");
+  const btnRestart = document.getElementById("btn-restart");
+
   const banner = document.getElementById("banner-status");
   const submitBtn = document.getElementById("btn-submit");
   const popupTransition = document.getElementById("popup-transition");
@@ -45,6 +48,24 @@
   window.currentBabak = currentBabak;
   let gameOver = false;
   const sessionStartTime = performance.now();
+
+  function loseHeart() {
+    const h = window.HUD.getHearts() - 1;
+    console.log('[loseHeart] hearts sekarang:', h);
+    window.HUD.setHearts(h);
+    if (h <= 0) {
+      triggerGameOver();
+    }
+  }
+
+  function triggerGameOver() {
+    gameOver = true;
+    popupGameOver.style.display = "flex";
+  }
+
+  btnRestart.addEventListener("click", function () {
+    window.location.reload();
+  });
 
   // ==================== BABAK 1 SETUP ====================
   window.Babak1.init();
@@ -82,7 +103,12 @@
     if (keyDirMap[e.key]) {
       delete heldKeys[keyDirMap[e.key]];
       const stillHeld = Object.keys(heldKeys)[0];
-      window.PlayerModule.setQueuedDir(stillHeld || null);
+      // Babak 2: berhenti saat tombol dilepas. Babak lain: Pac-Man style, tetap jalan.
+      if (stillHeld) {
+        window.PlayerModule.setQueuedDir(stillHeld);
+      } else if (currentBabak === 2) {
+        window.PlayerModule.setQueuedDir(null);
+      }
       e.preventDefault();
     }
   });
@@ -146,6 +172,7 @@
     } else {
       window.AudioEngine.play('wrong');
       banner.innerHTML = "Belum cocok, coba lubang lain.";
+      loseHeart();
     }
 
     sendJawaban(1, bola.indo, bola.inggris, cocok);
@@ -211,6 +238,7 @@
         window.AudioEngine.play('wrong');
         banner.innerHTML = 'Kurang tepat! Cari jawaban yang benar untuk soal ini.';
         banner.style.color = "#d9534f";
+        loseHeart();
       }
 
       sendJawaban(2, bola.indo, bola.inggris, cocok);
@@ -263,12 +291,14 @@
       } else {
         if (isGhost) {
           window.AudioEngine.play('ghost');
-          banner.innerHTML = 'HAP! Tertangkap hantu 👻, ulangi dari atas!';
+          banner.innerHTML = 'HAP! Tertangkap hantu 👻, soal berganti!';
         } else {
           window.AudioEngine.play('wrong');
-          banner.innerHTML = 'Salah pintu! Ulangi dari atas!';
+          banner.innerHTML = 'Salah pintu! Soal berganti, coba lagi!';
         }
         banner.style.color = "#d9534f";
+        updateBabak3Question();
+        loseHeart();
       }
 
       sendJawaban(3, bola.indo, bola.inggris, cocok);

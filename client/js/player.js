@@ -96,7 +96,8 @@ window.PlayerModule = (function () {
   syncPixel();
   window.Maze.forceWalkable(self.col, self.row);
 
-  let queuedDir = null;
+  let currentDir = null;  // arah yang sedang dijalankan (terus bergerak ala Pac-Man)
+  let queuedDir = null;   // arah berikutnya yang diminta player (diterapkan saat bisa belok)
   let onMoveCallback = null; // dipanggil setiap kali player berhasil pindah grid (untuk kirim ke server)
 
   function dirVector(d) {
@@ -109,6 +110,10 @@ window.PlayerModule = (function () {
 
   function setQueuedDir(dir) {
     queuedDir = dir;
+    // Jika player sedang idle (tidak bergerak), langsung coba terapkan arah baru
+    if (!self.isMoving && dir) {
+      currentDir = dir;
+    }
   }
 
   function teleport(col, row) {
@@ -121,6 +126,8 @@ window.PlayerModule = (function () {
     self.startRow = row;
     self.targetCol = col;
     self.targetRow = row;
+    currentDir = null;
+    queuedDir = null;
     syncPixel();
     if (onMoveCallback) onMoveCallback(col, row, self.facing);
   }
@@ -151,16 +158,51 @@ window.PlayerModule = (function () {
     }
 
     // 2. Start a new move if not currently moving
-    if (!self.isMoving) {
-      if (blocked || !queuedDir) {
-        self.animFrame = 0;
-      } else {
-        const v = dirVector(queuedDir);
-        if (v.x !== 0 || v.y !== 0) {
-          self.facing = queuedDir;
+    if (!self.isMoving && !blocked) {
+      const pacmanMode = (window.currentBabak === 1 || window.currentBabak === 3);
+
+      if (pacmanMode) {
+        // Pac-Man style: terus bergerak ke arah aktif sampai ketemu tembok
+        if (queuedDir) {
+          const vq = dirVector(queuedDir);
+          const nqc = self.col + vq.x;
+          const nqr = self.row + vq.y;
+          if (window.Maze.isWalkable(nqc, nqr)) {
+            currentDir = queuedDir;
+          }
+        }
+
+        if (currentDir) {
+          const v = dirVector(currentDir);
           const nc = self.col + v.x;
           const nr = self.row + v.y;
           if (window.Maze.isWalkable(nc, nr)) {
+            self.facing = currentDir;
+            self.isMoving = true;
+            self.startCol = self.col;
+            self.startRow = self.row;
+            self.targetCol = nc;
+            self.targetRow = nr;
+            self.moveTimer = 0;
+            self.animFrame = 0;
+            if (window.AudioEngine) window.AudioEngine.play('move');
+            if (onMoveCallback) onMoveCallback(self.targetCol, self.targetRow, self.facing);
+          } else {
+            self.animFrame = 0;
+          }
+        } else {
+          self.animFrame = 0;
+        }
+      } else {
+        // Normal style (babak 2): gerak hanya selama tombol ditekan
+        if (!queuedDir) {
+          self.animFrame = 0;
+        } else {
+          const v = dirVector(queuedDir);
+          const nc = self.col + v.x;
+          const nr = self.row + v.y;
+          if (window.Maze.isWalkable(nc, nr)) {
+            self.facing = queuedDir;
             self.isMoving = true;
             self.startCol = self.col;
             self.startRow = self.row;
