@@ -158,13 +158,103 @@ window.Babak1 = (function () {
   orbImg.src = "assets/sprites/orb-orange.png";
 
   // ---------- Data pasangan kata (Indonesia -> Inggris) ----------
-  const PASANGAN = [
+  const PASANGAN_POOL = [
     { indo: "Sibuk", inggris: "Hectic" },
     { indo: "Secara Harfiah", inggris: "Literally" },
     { indo: "Wawasan", inggris: "Insight" },
     { indo: "Batasan", inggris: "Boundary" },
     { indo: "Umpan Balik", inggris: "Feedback" },
+    { indo: "Tantangan", inggris: "Challenge" },
+    { indo: "Dukungan", inggris: "Support" },
+    { indo: "Dampak", inggris: "Impact" },
+    { indo: "Strategi", inggris: "Strategy" },
+    { indo: "Inovasi", inggris: "Innovation" },
+    { indo: "Kolaborasi", inggris: "Collaboration" },
+    { indo: "Motivasi", inggris: "Motivation" },
+    { indo: "Prioritas", inggris: "Priority" },
+    { indo: "Solusi", inggris: "Solution" },
+    { indo: "Konsistensi", inggris: "Consistency" },
+    { indo: "Perspektif", inggris: "Perspective" },
+    { indo: "Kreativitas", inggris: "Creativity" },
+    { indo: "Adaptasi", inggris: "Adaptation" },
+    { indo: "Komunikasi", inggris: "Communication" },
+    { indo: "Kepercayaan", inggris: "Trust" },
+    { indo: "Kemampuan", inggris: "Ability" },
+    { indo: "Pencapaian", inggris: "Achievement" },
+    { indo: "Kesadaran", inggris: "Awareness" },
+    { indo: "Keseimbangan", inggris: "Balance" },
+    { indo: "Perilaku", inggris: "Behavior" },
+    { indo: "Pilihan", inggris: "Choice" },
+    { indo: "Kejelasan", inggris: "Clarity" },
+    { indo: "Komitmen", inggris: "Commitment" },
+    { indo: "Kepercayaan Diri", inggris: "Confidence" },
+    { indo: "Koneksi", inggris: "Connection" },
+    { indo: "Konteks", inggris: "Context" },
+    { indo: "Budaya", inggris: "Culture" },
+    { indo: "Keputusan", inggris: "Decision" },
+    { indo: "Perkembangan", inggris: "Development" },
+    { indo: "Perbedaan", inggris: "Difference" },
+    { indo: "Usaha", inggris: "Effort" },
+    { indo: "Emosi", inggris: "Emotion" },
+    { indo: "Lingkungan", inggris: "Environment" },
+    { indo: "Pengalaman", inggris: "Experience" },
+    { indo: "Ekspresi", inggris: "Expression" },
+    { indo: "Kebebasan", inggris: "Freedom" },
+    { indo: "Pertumbuhan", inggris: "Growth" },
+    { indo: "Kebiasaan", inggris: "Habit" },
+    { indo: "Kebahagiaan", inggris: "Happiness" },
+    { indo: "Identitas", inggris: "Identity" },
+    { indo: "Imajinasi", inggris: "Imagination" },
+    { indo: "Dampak", inggris: "Influence" },
+    { indo: "Kecerdasan", inggris: "Intelligence" },
+    { indo: "Niat", inggris: "Intention" },
+    { indo: "Intuisi", inggris: "Intuition" },
+    { indo: "Penilaian", inggris: "Judgment" },
+    { indo: "Pengetahuan", inggris: "Knowledge" },
+    { indo: "Kepemimpinan", inggris: "Leadership" },
+    { indo: "Pembelajaran", inggris: "Learning" },
+    { indo: "Logika", inggris: "Logic" },
+    { indo: "Makna", inggris: "Meaning" },
+    { indo: "Ingatan", inggris: "Memory" },
+    { indo: "Pola Pikir", inggris: "Mindset" },
+    { indo: "Kebutuhan", inggris: "Need" },
+    { indo: "Jaringan", inggris: "Network" },
+    { indo: "Peluang", inggris: "Opportunity" },
+    { indo: "Organisasi", inggris: "Organization" },
+    { indo: "Pola", inggris: "Pattern" },
+    { indo: "Ketekunan", inggris: "Persistence" },
+    { indo: "Potensi", inggris: "Potential" },
+    { indo: "Proses", inggris: "Process" },
+    { indo: "Kemajuan", inggris: "Progress" },
+    { indo: "Tujuan", inggris: "Purpose" },
+    { indo: "Hubungan", inggris: "Relationship" },
+    { indo: "Ketahanan", inggris: "Resilience" },
+    { indo: "Tanggung Jawab", inggris: "Responsibility" },
+    { indo: "Risiko", inggris: "Risk" },
+    { indo: "Keamanan", inggris: "Safety" },
+    { indo: "Kepuasan", inggris: "Satisfaction" },
+    { indo: "Keahlian", inggris: "Skill" },
+    { indo: "Kekuatan", inggris: "Strength" },
+    { indo: "Kesuksesan", inggris: "Success" },
+    { indo: "Sistem", inggris: "System" },
+    { indo: "Bakat", inggris: "Talent" },
+    { indo: "Teknik", inggris: "Technique" },
+    { indo: "Teknologi", inggris: "Technology" },
+    { indo: "Pikiran", inggris: "Thought" },
+    { indo: "Waktu", inggris: "Time" },
+    { indo: "Nilai", inggris: "Value" },
+    { indo: "Visi", inggris: "Vision" },
+    { indo: "Kemauan", inggris: "Willingness" },
+    { indo: "Kebijaksanaan", inggris: "Wisdom" },
   ];
+
+  // Ambil 5 soal acak dari pool
+  function pickRandom(pool, n) {
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, n);
+  }
+
+  let PASANGAN = pickRandom(PASANGAN_POOL, 5);
 
   // ---------- Posisi bola kata DI DALAM labirin (titik aman di lorong) ----------
   const bolaPositions = [
@@ -195,21 +285,15 @@ window.Babak1 = (function () {
     };
   });
 
-  // Acak penempatan kata Inggris ke tiap lubang (tetap selama 1 sesi)
-  (function shuffleLubangWords() {
-    const words = PASANGAN.map(function (p) {
-      return p.inggris;
-    });
+  // Acak penempatan kata Inggris ke tiap lubang — dipanggil ulang tiap init()
+  function shuffleLubangWords() {
+    const words = PASANGAN.map(function (p) { return p.inggris; });
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      const tmp = words[i];
-      words[i] = words[j];
-      words[j] = tmp;
+      const tmp = words[i]; words[i] = words[j]; words[j] = tmp;
     }
-    ZONA.forEach(function (z, i) {
-      z.inggris = words[i];
-    });
-  })();
+    ZONA.forEach(function (z, i) { z.inggris = words[i]; });
+  }
 
   let bolaList = [];
   let carrying = null;
@@ -218,6 +302,8 @@ window.Babak1 = (function () {
   let onSubmitResultCallback = null;
 
   function init() {
+    PASANGAN = pickRandom(PASANGAN_POOL, 5); // Acak ulang tiap init
+    shuffleLubangWords(); // Assign ulang kata ke roket sesuai PASANGAN baru
     bolaList = PASANGAN.map(function (p, i) {
       return {
         indo: p.indo,
