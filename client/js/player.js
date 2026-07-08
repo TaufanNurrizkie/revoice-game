@@ -68,7 +68,7 @@ window.PlayerModule = (function () {
     x: 0,
     y: 0,
     moveTimer: 0,
-    moveInterval: 120,
+    moveInterval: 200,
     color: "#d9534f",
     characterId: myCharacterId,
     facing: "down", // arah hadap terakhir, dipakai untuk pilih baris sprite
@@ -96,8 +96,8 @@ window.PlayerModule = (function () {
   syncPixel();
   window.Maze.forceWalkable(self.col, self.row);
 
-  let currentDir = null;  // arah yang sedang dijalankan (terus bergerak ala Pac-Man)
-  let queuedDir = null;   // arah berikutnya yang diminta player (diterapkan saat bisa belok)
+  let currentDir = null; // arah yang sedang dijalankan (terus bergerak ala Pac-Man)
+  let queuedDir = null; // arah berikutnya yang diminta player (diterapkan saat bisa belok)
   let onMoveCallback = null; // dipanggil setiap kali player berhasil pindah grid (untuk kirim ke server)
 
   function dirVector(d) {
@@ -151,7 +151,7 @@ window.PlayerModule = (function () {
         const targetY = self.targetRow * TILE + TILE / 2;
         self.x = startX + (targetX - startX) * t;
         self.y = startY + (targetY - startY) * t;
-        
+
         // Cycle walking animation frames (0 or 1)
         self.animFrame = Math.round(t) % 2;
       }
@@ -159,7 +159,7 @@ window.PlayerModule = (function () {
 
     // 2. Start a new move if not currently moving
     if (!self.isMoving && !blocked) {
-      const pacmanMode = (window.currentBabak === 1 || window.currentBabak === 3);
+      const pacmanMode = window.currentBabak === 1 || window.currentBabak === 3;
 
       if (pacmanMode) {
         // Pac-Man style: terus bergerak ke arah aktif sampai ketemu tembok
@@ -185,8 +185,9 @@ window.PlayerModule = (function () {
             self.targetRow = nr;
             self.moveTimer = 0;
             self.animFrame = 0;
-            if (window.AudioEngine) window.AudioEngine.play('move');
-            if (onMoveCallback) onMoveCallback(self.targetCol, self.targetRow, self.facing);
+            if (window.AudioEngine) window.AudioEngine.play("move");
+            if (onMoveCallback)
+              onMoveCallback(self.targetCol, self.targetRow, self.facing);
           } else {
             self.animFrame = 0;
           }
@@ -210,8 +211,9 @@ window.PlayerModule = (function () {
             self.targetRow = nr;
             self.moveTimer = 0;
             self.animFrame = 0;
-            if (window.AudioEngine) window.AudioEngine.play('move');
-            if (onMoveCallback) onMoveCallback(self.targetCol, self.targetRow, self.facing);
+            if (window.AudioEngine) window.AudioEngine.play("move");
+            if (onMoveCallback)
+              onMoveCallback(self.targetCol, self.targetRow, self.facing);
           } else {
             self.animFrame = 0;
           }
@@ -274,9 +276,10 @@ window.PlayerModule = (function () {
       return;
     }
     const charData = window.getCharacterById(characterId);
-    const frameSet = (charData.framesOverride && charData.framesOverride[facing])
-      ? charData.framesOverride[facing]
-      : (FRAMES[facing] || FRAMES.idle);
+    const frameSet =
+      charData.framesOverride && charData.framesOverride[facing]
+        ? charData.framesOverride[facing]
+        : FRAMES[facing] || FRAMES.idle;
     const seq = frameSet;
     const frame = seq[animFrame % seq.length];
 
