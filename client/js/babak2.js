@@ -8,9 +8,10 @@ window.Babak2 = (function () {
     ctx.save();
     ctx.translate(x, y);
 
-    const col  = type === "orange" ? "#FFD700" : "#00E5FF";
+    const col = type === "orange" ? "#FFD700" : "#00E5FF";
     const col2 = type === "orange" ? "#FFA500" : "#0097A7";
-    const glow = type === "orange" ? "rgba(255,215,0,0.4)" : "rgba(0,229,255,0.4)";
+    const glow =
+      type === "orange" ? "rgba(255,215,0,0.4)" : "rgba(0,229,255,0.4)";
 
     // Pulse glow
     const grd = ctx.createRadialGradient(0, 0, 1, 0, 0, size * 0.9);
@@ -56,7 +57,15 @@ window.Babak2 = (function () {
     // Shine
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.beginPath();
-    ctx.ellipse(-size * 0.1, -size * 0.18, size * 0.1, size * 0.05, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.ellipse(
+      -size * 0.1,
+      -size * 0.18,
+      size * 0.1,
+      size * 0.05,
+      -Math.PI / 4,
+      0,
+      Math.PI * 2,
+    );
     ctx.fill();
 
     ctx.restore();
@@ -65,7 +74,14 @@ window.Babak2 = (function () {
   function drawBasket(ctx, px, py, isCurrentZona, glowColor) {
     // Ground glow
     const glowRadius = TILE * 0.85 + Math.sin(performance.now() / 120) * 1.5;
-    const grad = ctx.createRadialGradient(px, py + TILE * 0.15, 2, px, py + TILE * 0.15, glowRadius);
+    const grad = ctx.createRadialGradient(
+      px,
+      py + TILE * 0.15,
+      2,
+      px,
+      py + TILE * 0.15,
+      glowRadius,
+    );
     grad.addColorStop(0, isCurrentZona ? glowColor : "rgba(255,255,255,0.1)");
     grad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = grad;
@@ -142,46 +158,206 @@ window.Babak2 = (function () {
   orbImg.src = "assets/sprites/orb-teal.png";
 
   const SOAL_POOL = [
-    { kalimat: "Aku lagi overthinking tentang masa depan.", inggris: "overthinking", indo: "Berpikir Berlebih" },
-    { kalimat: "Dia selalu support aku.", inggris: "support", indo: "Mendukung" },
-    { kalimat: "Aku nggak setuju sama statement itu.", inggris: "statement", indo: "Pernyataan" },
-    { kalimat: "Aku suka vibes tempat ini.", inggris: "vibes", indo: "Suasana" },
-    { kalimat: "Dia memiliki banyak experience di bidang itu.", inggris: "experience", indo: "Pengalaman" },
-    { kalimat: "Media sosial memberi influence besar pada remaja.", inggris: "influence", indo: "Pengaruh" },
-    { kalimat: "Dia memiliki mindset yang positif.", inggris: "mindset", indo: "Pola Pikir" },
-    { kalimat: "Aku prefer belajar malam.", inggris: "prefer", indo: "Memilih" },
-    { kalimat: "Dia selalu kasih feedback yang bagus.", inggris: "feedback", indo: "Umpan Balik" },
-    { kalimat: "Aku struggle buat konsisten belajar setiap hari.", inggris: "struggle", indo: "Kesusahan" },
-    { kalimat: "Kita perlu update sistem ini.", inggris: "update", indo: "Perbarui" },
-    { kalimat: "Dia punya skill komunikasi yang bagus.", inggris: "skill", indo: "Kemampuan" },
-    { kalimat: "Aku mau upgrade diri aku tahun ini.", inggris: "upgrade", indo: "Tingkatkan" },
-    { kalimat: "Situasinya bikin aku stress banget.", inggris: "stress", indo: "Tekanan" },
-    { kalimat: "Kita harus manage waktu dengan baik.", inggris: "manage", indo: "Kelola" },
-    { kalimat: "Proyek ini butuh planning yang matang.", inggris: "planning", indo: "Perencanaan" },
-    { kalimat: "Dia punya attitude yang profesional.", inggris: "attitude", indo: "Sikap" },
-    { kalimat: "Aku butuh challenge baru buat berkembang.", inggris: "challenge", indo: "Tantangan" },
-    { kalimat: "Mereka butuh teamwork yang solid.", inggris: "teamwork", indo: "Kerja Tim" },
-    { kalimat: "Aku pengen achieve semua target tahun ini.", inggris: "achieve", indo: "Mencapai" },
-    { kalimat: "Kamu harus commit sama keputusan yang udah dibuat.", inggris: "commit", indo: "Berkomitmen" },
-    { kalimat: "Dia selalu deliver hasil kerja tepat waktu.", inggris: "deliver", indo: "Menyerahkan" },
-    { kalimat: "Aku mau explore lebih banyak peluang baru.", inggris: "explore", indo: "Menjelajahi" },
-    { kalimat: "Kita perlu focus sama tujuan utama kita.", inggris: "focus", indo: "Fokus" },
-    { kalimat: "Dia kasih impact besar buat timnya.", inggris: "impact", indo: "Dampak" },
-    { kalimat: "Aku pengen improve kemampuan public speaking.", inggris: "improve", indo: "Meningkatkan" },
-    { kalimat: "Kamu harus punya initiative buat mulai duluan.", inggris: "initiative", indo: "Inisiatif" },
-    { kalimat: "Aku mau invest waktu buat belajar hal baru.", inggris: "invest", indo: "Menginvestasikan" },
-    { kalimat: "Dia selalu maintain hubungan baik sama klien.", inggris: "maintain", indo: "Menjaga" },
-    { kalimat: "Kita perlu network lebih luas di industri ini.", inggris: "network", indo: "Jaringan" },
-    { kalimat: "Aku harus organize jadwal biar lebih rapi.", inggris: "organize", indo: "Mengatur" },
-    { kalimat: "Dia punya passion yang kuat di bidang seni.", inggris: "passion", indo: "Semangat" },
-    { kalimat: "Kamu perlu reflect diri setiap akhir minggu.", inggris: "reflect", indo: "Merenungkan" },
-    { kalimat: "Aku mau share pengalaman ini ke temen-temen.", inggris: "share", indo: "Berbagi" },
-    { kalimat: "Dia selalu solve masalah dengan tenang.", inggris: "solve", indo: "Memecahkan" },
-    { kalimat: "Kita perlu track progress kita setiap hari.", inggris: "track", indo: "Melacak" },
-    { kalimat: "Aku mau transform cara belajar aku sepenuhnya.", inggris: "transform", indo: "Mengubah" },
-    { kalimat: "Dia always try yang terbaik dalam setiap situasi.", inggris: "try", indo: "Berusaha" },
-    { kalimat: "Kamu harus validate ide kamu sebelum eksekusi.", inggris: "validate", indo: "Memvalidasi" },
-    { kalimat: "Aku pengen volunteer di kegiatan sosial.", inggris: "volunteer", indo: "Sukarela" },
+    {
+      kalimat: "Saya sedang overthinking tentang masa depan.",
+      inggris: "overthinking",
+      indo: "Berpikir Berlebih",
+    },
+    {
+      kalimat: "Dia selalu support saya.",
+      inggris: "support",
+      indo: "Mendukung",
+    },
+    {
+      kalimat: "Saya tidak setuju dengan statement itu.",
+      inggris: "statement",
+      indo: "Pernyataan",
+    },
+    {
+      kalimat: "Saya menyukai vibes tempat ini.",
+      inggris: "vibes",
+      indo: "Suasana",
+    },
+    {
+      kalimat: "Dia memiliki banyak experience di bidang itu.",
+      inggris: "experience",
+      indo: "Pengalaman",
+    },
+    {
+      kalimat: "Media sosial memberikan influence besar pada remaja.",
+      inggris: "influence",
+      indo: "Pengaruh",
+    },
+    {
+      kalimat: "Dia memiliki mindset yang positif.",
+      inggris: "mindset",
+      indo: "Pola Pikir",
+    },
+    {
+      kalimat: "Saya prefer belajar pada malam hari.",
+      inggris: "prefer",
+      indo: "Memilih",
+    },
+    {
+      kalimat: "Dia selalu memberikan feedback yang bagus.",
+      inggris: "feedback",
+      indo: "Umpan Balik",
+    },
+    {
+      kalimat: "Saya struggle untuk konsisten belajar setiap hari.",
+      inggris: "struggle",
+      indo: "Kesusahan",
+    },
+    {
+      kalimat: "Kita perlu update sistem ini.",
+      inggris: "update",
+      indo: "Perbarui",
+    },
+    {
+      kalimat: "Dia memiliki skill komunikasi yang bagus.",
+      inggris: "skill",
+      indo: "Kemampuan",
+    },
+    {
+      kalimat: "Saya ingin upgrade diri saya tahun ini.",
+      inggris: "upgrade",
+      indo: "Tingkatkan",
+    },
+    {
+      kalimat: "Situasi itu membuat saya sangat stress.",
+      inggris: "stress",
+      indo: "Tekanan",
+    },
+    {
+      kalimat: "Kita harus manage waktu dengan baik.",
+      inggris: "manage",
+      indo: "Kelola",
+    },
+    {
+      kalimat: "Proyek ini membutuhkan planning yang matang.",
+      inggris: "planning",
+      indo: "Perencanaan",
+    },
+    {
+      kalimat: "Dia memiliki attitude yang profesional.",
+      inggris: "attitude",
+      indo: "Sikap",
+    },
+    {
+      kalimat: "Saya membutuhkan challenge baru untuk berkembang.",
+      inggris: "challenge",
+      indo: "Tantangan",
+    },
+    {
+      kalimat: "Mereka membutuhkan teamwork yang solid.",
+      inggris: "teamwork",
+      indo: "Kerja Tim",
+    },
+    {
+      kalimat: "Saya ingin achieve semua target tahun ini.",
+      inggris: "achieve",
+      indo: "Mencapai",
+    },
+    {
+      kalimat: "Kamu harus commit terhadap keputusan yang telah dibuat.",
+      inggris: "commit",
+      indo: "Berkomitmen",
+    },
+    {
+      kalimat: "Dia selalu deliver hasil kerja tepat waktu.",
+      inggris: "deliver",
+      indo: "Menyerahkan",
+    },
+    {
+      kalimat: "Saya ingin explore lebih banyak peluang baru.",
+      inggris: "explore",
+      indo: "Menjelajahi",
+    },
+    {
+      kalimat: "Kita perlu focus pada tujuan utama kita.",
+      inggris: "focus",
+      indo: "Fokus",
+    },
+    {
+      kalimat: "Dia memberikan impact besar bagi timnya.",
+      inggris: "impact",
+      indo: "Dampak",
+    },
+    {
+      kalimat: "Saya ingin improve kemampuan public speaking.",
+      inggris: "improve",
+      indo: "Meningkatkan",
+    },
+    {
+      kalimat: "Kamu harus memiliki initiative untuk memulai lebih dulu.",
+      inggris: "initiative",
+      indo: "Inisiatif",
+    },
+    {
+      kalimat: "Saya ingin invest waktu untuk mempelajari hal baru.",
+      inggris: "invest",
+      indo: "Menginvestasikan",
+    },
+    {
+      kalimat: "Dia selalu maintain hubungan baik dengan klien.",
+      inggris: "maintain",
+      indo: "Menjaga",
+    },
+    {
+      kalimat: "Kita perlu network lebih luas di industri ini.",
+      inggris: "network",
+      indo: "Jaringan",
+    },
+    {
+      kalimat: "Saya harus organize jadwal agar lebih rapi.",
+      inggris: "organize",
+      indo: "Mengatur",
+    },
+    {
+      kalimat: "Dia memiliki passion yang kuat di bidang seni.",
+      inggris: "passion",
+      indo: "Semangat",
+    },
+    {
+      kalimat: "Kamu perlu reflect diri setiap akhir minggu.",
+      inggris: "reflect",
+      indo: "Merenungkan",
+    },
+    {
+      kalimat: "Saya ingin share pengalaman ini kepada teman-teman.",
+      inggris: "share",
+      indo: "Berbagi",
+    },
+    {
+      kalimat: "Dia selalu solve masalah dengan tenang.",
+      inggris: "solve",
+      indo: "Memecahkan",
+    },
+    {
+      kalimat: "Kita perlu track progress kita setiap hari.",
+      inggris: "track",
+      indo: "Melacak",
+    },
+    {
+      kalimat: "Saya ingin transform cara belajar saya sepenuhnya.",
+      inggris: "transform",
+      indo: "Mengubah",
+    },
+    {
+      kalimat: "Dia selalu try yang terbaik dalam setiap situasi.",
+      inggris: "try",
+      indo: "Berusaha",
+    },
+    {
+      kalimat: "Kamu harus validate ide kamu sebelum melakukan eksekusi.",
+      inggris: "validate",
+      indo: "Memvalidasi",
+    },
+    {
+      kalimat: "Saya ingin volunteer dalam kegiatan sosial.",
+      inggris: "volunteer",
+      indo: "Sukarela",
+    },
   ];
 
   // Ambil 10 soal acak dari pool
@@ -216,8 +392,16 @@ window.Babak2 = (function () {
   ];
 
   const bolaPositions = [
-    { col: 2, row: 2 }, { col: 5, row: 2 }, { col: 8, row: 2 }, { col: 12, row: 2 }, { col: 15, row: 2 }, { col: 18, row: 2 },
-    { col: 3, row: 4 }, { col: 6, row: 4 }, { col: 14, row: 4 }, { col: 17, row: 4 }
+    { col: 2, row: 2 },
+    { col: 5, row: 2 },
+    { col: 8, row: 2 },
+    { col: 12, row: 2 },
+    { col: 15, row: 2 },
+    { col: 18, row: 2 },
+    { col: 3, row: 4 },
+    { col: 6, row: 4 },
+    { col: 14, row: 4 },
+    { col: 17, row: 4 },
   ];
 
   let bolaList = [];
@@ -246,7 +430,7 @@ window.Babak2 = (function () {
       col: bolaPositions[i].col,
       row: bolaPositions[i].row,
       taken: false,
-      submitted: false
+      submitted: false,
     }));
 
     currentQIndex = 0;
@@ -260,11 +444,13 @@ window.Babak2 = (function () {
 
   function onPlayerMove(col, row) {
     if (!carrying) {
-      const target = bolaList.find(b => !b.taken && !b.submitted && b.col === col && b.row === row);
+      const target = bolaList.find(
+        (b) => !b.taken && !b.submitted && b.col === col && b.row === row,
+      );
       if (target) {
         target.taken = true;
         carrying = target;
-        if (window.AudioEngine) window.AudioEngine.play('pickup');
+        if (window.AudioEngine) window.AudioEngine.play("pickup");
       }
     }
 
@@ -303,7 +489,10 @@ window.Babak2 = (function () {
       return { cocok: true, bola: submittedBola };
     } else {
       if (window.showGameAlert) {
-        window.showGameAlert("Jawaban Salah!", "Bola dikembalikan ke posisi semula.");
+        window.showGameAlert(
+          "Jawaban Salah!",
+          "Bola dikembalikan ke posisi semula.",
+        );
       } else {
         alert("Jawaban salah! Bola dikembalikan ke posisi semula.");
       }
@@ -321,9 +510,9 @@ window.Babak2 = (function () {
       const targetBridge = getBridgeTargetPos();
       const px = targetBridge.col * TILE + TILE / 2;
       const py = (targetBridge.row - 1) * TILE + TILE / 2;
-      
+
       drawBasket(ctx, px, py, inSubmitZone, "rgba(63, 157, 143, 0.45)");
-      
+
       // Portal text label
       ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
       ctx.textAlign = "center";
@@ -335,12 +524,12 @@ window.Babak2 = (function () {
     }
 
     // Gambar buah teal magic berry
-    bolaList.forEach(b => {
+    bolaList.forEach((b) => {
       if (b.taken || b.submitted) return;
       const px = b.col * TILE + TILE / 2;
       const py = b.row * TILE + TILE / 2;
       const size = 16 + Math.sin(performance.now() / 220) * 2; // Pulsing size
-      
+
       drawFruit(ctx, px, py, size, "teal");
 
       ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
@@ -355,30 +544,32 @@ window.Babak2 = (function () {
 
   function drawCarried(ctx, playerX, playerY) {
     if (!carrying) return;
-    
+
     // Determine animation movement state
-    const player = window.PlayerModule ? window.PlayerModule.self : { isMoving: false };
+    const player = window.PlayerModule
+      ? window.PlayerModule.self
+      : { isMoving: false };
     const isMoving = player.isMoving || false;
-    
+
     // Cute carried item bobbing animation (faster bounce when moving, gentle float when idle)
     const bobPeriod = isMoving ? 120 : 220;
     const bob = Math.sin(performance.now() / bobPeriod) * 1.6;
-    
+
     // Position fruit to float cleanly above the head with a distinct gap (not touching the head)
     const ox = playerX;
-    const oy = playerY - 24 + bob; 
+    const oy = playerY - 24 + bob;
     const size = 15; // cute, visible size
-    
+
     ctx.save();
-    
+
     // Soft shadow below the fruit
     ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 2;
-    
+
     drawFruit(ctx, ox, oy, size, "teal");
     ctx.restore();
-    
+
     // Word label floats cleanly above the speech bubble with outline for visibility
     ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
     ctx.textAlign = "center";
@@ -402,7 +593,7 @@ window.Babak2 = (function () {
     isCarrying: () => !!carrying,
     isInSubmitZone: () => inSubmitZone,
     getCurrentQuestion,
-    onAllSubmitted: cb => onAllSubmittedCallback = cb,
-    onSubmitResult: cb => onSubmitResultCallback = cb
+    onAllSubmitted: (cb) => (onAllSubmittedCallback = cb),
+    onSubmitResult: (cb) => (onSubmitResultCallback = cb),
   };
 })();
