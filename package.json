@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "dev": "node --watch server/index.js",
+    "postinstall": "npm rebuild sqlite3 --build-from-source"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
