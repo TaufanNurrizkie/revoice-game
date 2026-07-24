@@ -410,6 +410,7 @@ window.Babak2 = (function () {
 
   let onAllSubmittedCallback = null;
   let onSubmitResultCallback = null;
+  let onDropCallback = null;
 
   function init() {
     window.Maze.loadPattern(pattern);
@@ -488,13 +489,12 @@ window.Babak2 = (function () {
       }
       return { cocok: true, bola: submittedBola };
     } else {
+      // Kata salah: kembalikan ke posisi semula TANPA penalti nyawa
       if (window.showGameAlert) {
         window.showGameAlert(
-          "Jawaban Salah!",
-          "Bola dikembalikan ke posisi semula.",
+          "Bukan kata yang tepat!",
+          'Kata "' + carrying.indo + '" dikembalikan. Cari kata yang benar.',
         );
-      } else {
-        alert("Jawaban salah! Bola dikembalikan ke posisi semula.");
       }
       carrying.taken = false;
       const returnedBola = carrying;
@@ -502,6 +502,17 @@ window.Babak2 = (function () {
       if (onSubmitResultCallback) onSubmitResultCallback(false, returnedBola);
       return { cocok: false, bola: returnedBola };
     }
+  }
+
+  // Lepas bola yang sedang dibawa tanpa penalti
+  function dropCarried() {
+    if (!carrying) return null;
+    carrying.taken = false;
+    const droppedBola = carrying;
+    carrying = null;
+    inSubmitZone = false;
+    if (onDropCallback) onDropCallback(droppedBola);
+    return droppedBola;
   }
 
   function draw(ctx) {
@@ -588,6 +599,7 @@ window.Babak2 = (function () {
     init,
     onPlayerMove,
     trySubmit,
+    dropCarried,
     draw,
     drawCarried,
     isCarrying: () => !!carrying,
@@ -595,5 +607,6 @@ window.Babak2 = (function () {
     getCurrentQuestion,
     onAllSubmitted: (cb) => (onAllSubmittedCallback = cb),
     onSubmitResult: (cb) => (onSubmitResultCallback = cb),
+    onDrop: (cb) => (onDropCallback = cb),
   };
 })();
