@@ -95,7 +95,7 @@ window.Babak3 = (function () {
   let ghost = {
     x: 10 * 26 + 13, // TILE = 26, mid col 10
     y: 1 * 26 + 13,
-    speed: 100, // pixels per second (player is usually around 80-100)
+    speed: 55, // pixels per second (player is usually around 80-100)
     size: 26,
     targetTile: null,
   };

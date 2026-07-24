@@ -244,6 +244,31 @@
       opacity: 0.35;
       box-shadow: none;
     }
+
+    #btn-drop-mobile {
+      display: none;
+      width: 100%;
+      max-width: 130px;
+      padding: 12px 10px;
+      font-size: 13px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #5c1a1a 0%, #2d0a0a 100%);
+      color: #fca5a5;
+      border: 2px solid rgba(248,113,113,0.5);
+      border-radius: 14px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      text-align: center;
+      line-height: 1.4;
+      box-shadow: 0 4px 10px rgba(180,30,30,0.3);
+      transition: background 0.1s, transform 0.08s;
+    }
+    #btn-drop-mobile:active {
+      background: linear-gradient(135deg, #991b1b 0%, #450a0a 100%);
+      transform: scale(0.95);
+      box-shadow: 0 0 14px rgba(248,113,113,0.6);
+    }
     /* ===== END MOBILE ===== */
   </style>
 </head>
@@ -294,6 +319,7 @@
     </div>
     <div class="mobile-right">
       <button id="btn-submit-mobile" disabled>🎯<br>Submit</button>
+      <button id="btn-drop-mobile">↩️<br>Lepas Kata</button>
     </div>
   </div>
 
@@ -379,6 +405,29 @@
         btnSubmitMobile.addEventListener('click', function () {
           if (!btnSubmitMobile.disabled) btnSubmitDesktop.click();
         });
+      }
+
+      // Tombol Lepas Kata (babak 2 mobile)
+      var btnDropMobile = document.getElementById('btn-drop-mobile');
+      if (btnDropMobile) {
+        function updateDropBtn() {
+          if (window.currentBabak === 2 && window.Babak2 && window.Babak2.isCarrying()) {
+            btnDropMobile.style.display = 'block';
+          } else {
+            btnDropMobile.style.display = 'none';
+          }
+        }
+        // Poll setiap 200ms untuk update visibilitas tombol
+        setInterval(updateDropBtn, 200);
+
+        function doDrop(e) {
+          e.preventDefault();
+          if (window.Babak2 && window.Babak2.isCarrying()) {
+            window.Babak2.dropCarried();
+          }
+        }
+        btnDropMobile.addEventListener('touchstart', doDrop, { passive: false });
+        btnDropMobile.addEventListener('click', doDrop);
       }
     })();
   </script>

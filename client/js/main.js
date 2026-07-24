@@ -96,6 +96,11 @@
     } else if (e.key === " " || e.key === "Enter") {
       handleSubmit();
       e.preventDefault();
+    } else if ((e.key === "q" || e.key === "Q" || e.key === "Escape") && currentBabak === 2) {
+      if (window.Babak2.isCarrying()) {
+        window.Babak2.dropCarried();
+        e.preventDefault();
+      }
     }
   });
 
@@ -236,9 +241,9 @@
         updateBabak2Question();
       } else {
         window.AudioEngine.play('wrong');
-        banner.innerHTML = 'Kurang tepat! Cari jawaban yang benar untuk soal ini.';
+        banner.innerHTML = 'Bukan kata yang tepat! Kata dikembalikan, coba yang lain.';
         banner.style.color = "#d9534f";
-        loseHeart();
+        // Tidak kehilangan nyawa saat salah pilih kata di babak 2
       }
 
       sendJawaban(2, bola.indo, bola.inggris, cocok);
@@ -246,6 +251,11 @@
         banner.style.color = "";
         updateBanner();
       }, 1400);
+    });
+
+    window.Babak2.onDrop(function (bola) {
+      banner.innerHTML = 'Kata <b>"' + bola.indo + '"</b> dilepas, kamu bisa ambil kata lain.';
+      setTimeout(function () { updateBanner(); }, 1200);
     });
 
     window.Babak2.onAllSubmitted(function () {
@@ -360,10 +370,10 @@
       banner.textContent = "Ambil kotak kata yang sesuai dengan soal di atas.";
       submitBtn.disabled = true;
     } else if (inZone) {
-      banner.innerHTML = "Kamu di tepi sungai. Tekan <b>Spasi</b> untuk menaruh jembatan!";
+      banner.innerHTML = "Kamu di tepi sungai. Tekan <b>Spasi</b> untuk submit! (Tekan <b>Q</b> untuk lepas kata)";
       submitBtn.disabled = false;
     } else {
-      banner.textContent = "Bawa kata ke tepi sungai (di atas jembatan berikutnya).";
+      banner.innerHTML = 'Membawa kata. Cari tepi sungai untuk submit. (Tekan <b>Q</b> untuk lepas)';
       submitBtn.disabled = true;
     }
   }
