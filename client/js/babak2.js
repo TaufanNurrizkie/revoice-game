@@ -194,7 +194,7 @@ window.Babak2 = (function () {
       indo: "Pola Pikir",
     },
     {
-      kalimat: "Saya lebih suka belajar pada malam hari.",
+      kalimat: "Saya prefer belajar pada malam hari.",
       inggris: "prefer",
       indo: "Lebih suka",
     },
@@ -204,12 +204,12 @@ window.Babak2 = (function () {
       indo: "Umpan Balik",
     },
     {
-      kalimat: "Saya mengalami kesulitan untuk konsisten belajar setiap hari.",
+      kalimat: "Saya struggle untuk konsisten belajar setiap hari.",
       inggris: "struggle",
       indo: "Kesulitan",
     },
     {
-      kalimat: "Kita perlu memperbarui sistem ini.",
+      kalimat: "Kita perlu update sistem ini.",
       inggris: "update",
       indo: "Memperbarui",
     },
@@ -229,7 +229,7 @@ window.Babak2 = (function () {
       indo: "Tekanan",
     },
     {
-      kalimat: "Kita harus mengelola waktu dengan baik.",
+      kalimat: "Kita harus manage waktu dengan baik.",
       inggris: "manage",
       indo: "Mengelola",
     },
@@ -249,7 +249,7 @@ window.Babak2 = (function () {
       indo: "Tantangan",
     },
     {
-      kalimat: "Mereka membutuhkan kerja sama tim yang solid.",
+      kalimat: "Mereka membutuhkan teamwork yang solid.",
       inggris: "teamwork",
       indo: "Kerja sama tim",
     },
@@ -339,12 +339,12 @@ window.Babak2 = (function () {
       indo: "Melacak",
     },
     {
-      kalimat: "Saya ingin mentransformasi cara belajar saya sepenuhnya.",
+      kalimat: "Saya ingin transform cara belajar saya sepenuhnya.",
       inggris: "transform",
       indo: "Mentransformasi",
     },
     {
-      kalimat: "Dia selalu mencoba yang terbaik dalam setiap situasi.",
+      kalimat: "Dia selalu try yang terbaik dalam setiap situasi.",
       inggris: "try",
       indo: "Mencoba",
     },
