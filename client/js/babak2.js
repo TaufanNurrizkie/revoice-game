@@ -194,9 +194,9 @@ window.Babak2 = (function () {
       indo: "Pola Pikir",
     },
     {
-      kalimat: "Saya prefer belajar pada malam hari.",
+      kalimat: "Saya lebih suka belajar pada malam hari.",
       inggris: "prefer",
-      indo: "Memilih",
+      indo: "Lebih suka",
     },
     {
       kalimat: "Dia selalu memberikan feedback yang bagus.",
@@ -204,14 +204,14 @@ window.Babak2 = (function () {
       indo: "Umpan Balik",
     },
     {
-      kalimat: "Saya struggle untuk konsisten belajar setiap hari.",
+      kalimat: "Saya mengalami kesulitan untuk konsisten belajar setiap hari.",
       inggris: "struggle",
-      indo: "Kesusahan",
+      indo: "Kesulitan",
     },
     {
-      kalimat: "Kita perlu update sistem ini.",
+      kalimat: "Kita perlu memperbarui sistem ini.",
       inggris: "update",
-      indo: "Perbarui",
+      indo: "Memperbarui",
     },
     {
       kalimat: "Dia memiliki skill komunikasi yang bagus.",
@@ -224,14 +224,14 @@ window.Babak2 = (function () {
       indo: "Tingkatkan",
     },
     {
-      kalimat: "Situasi itu membuat saya sangat stress.",
-      inggris: "stress",
+      kalimat: "Saya mendapatkan pressure yang besar.",
+      inggris: "pressure",
       indo: "Tekanan",
     },
     {
-      kalimat: "Kita harus manage waktu dengan baik.",
+      kalimat: "Kita harus mengelola waktu dengan baik.",
       inggris: "manage",
-      indo: "Kelola",
+      indo: "Mengelola",
     },
     {
       kalimat: "Proyek ini membutuhkan planning yang matang.",
@@ -249,9 +249,9 @@ window.Babak2 = (function () {
       indo: "Tantangan",
     },
     {
-      kalimat: "Mereka membutuhkan teamwork yang solid.",
+      kalimat: "Mereka membutuhkan kerja sama tim yang solid.",
       inggris: "teamwork",
-      indo: "Kerja Tim",
+      indo: "Kerja sama tim",
     },
     {
       kalimat: "Saya ingin achieve semua target tahun ini.",
@@ -304,9 +304,9 @@ window.Babak2 = (function () {
       indo: "Menjaga",
     },
     {
-      kalimat: "Kita perlu network lebih luas di industri ini.",
+      kalimat: "Kita perlu memperluas network di industri ini.",
       inggris: "network",
-      indo: "Jaringan",
+      indo: "Jejaring",
     },
     {
       kalimat: "Saya harus organize jadwal agar lebih rapi.",
@@ -316,7 +316,7 @@ window.Babak2 = (function () {
     {
       kalimat: "Dia memiliki passion yang kuat di bidang seni.",
       inggris: "passion",
-      indo: "Semangat",
+      indo: "Gairah",
     },
     {
       kalimat: "Kamu perlu reflect diri setiap akhir minggu.",
@@ -339,14 +339,14 @@ window.Babak2 = (function () {
       indo: "Melacak",
     },
     {
-      kalimat: "Saya ingin transform cara belajar saya sepenuhnya.",
+      kalimat: "Saya ingin mentransformasi cara belajar saya sepenuhnya.",
       inggris: "transform",
-      indo: "Mengubah",
+      indo: "Mentransformasi",
     },
     {
-      kalimat: "Dia selalu try yang terbaik dalam setiap situasi.",
+      kalimat: "Dia selalu mencoba yang terbaik dalam setiap situasi.",
       inggris: "try",
-      indo: "Berusaha",
+      indo: "Mencoba",
     },
     {
       kalimat: "Kamu harus validate ide kamu sebelum melakukan eksekusi.",
@@ -354,9 +354,9 @@ window.Babak2 = (function () {
       indo: "Memvalidasi",
     },
     {
-      kalimat: "Saya ingin volunteer dalam kegiatan sosial.",
+      kalimat: "Saya ingin menjadi volunteer dalam kegiatan sosial.",
       inggris: "volunteer",
-      indo: "Sukarela",
+      indo: "Relawan",
     },
   ];
 

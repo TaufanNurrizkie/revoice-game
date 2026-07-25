@@ -24,9 +24,10 @@ window.Babak1 = (function () {
     ctx.save();
     ctx.translate(x, y);
 
-    const col  = type === "orange" ? "#FFD700" : "#00E5FF";
+    const col = type === "orange" ? "#FFD700" : "#00E5FF";
     const col2 = type === "orange" ? "#FFA500" : "#0097A7";
-    const glow = type === "orange" ? "rgba(255,215,0,0.4)" : "rgba(0,229,255,0.4)";
+    const glow =
+      type === "orange" ? "rgba(255,215,0,0.4)" : "rgba(0,229,255,0.4)";
 
     // Pulse glow
     const grd = ctx.createRadialGradient(0, 0, 1, 0, 0, size * 0.9);
@@ -72,7 +73,15 @@ window.Babak1 = (function () {
     // Shine
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.beginPath();
-    ctx.ellipse(-size * 0.1, -size * 0.18, size * 0.1, size * 0.05, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.ellipse(
+      -size * 0.1,
+      -size * 0.18,
+      size * 0.1,
+      size * 0.05,
+      -Math.PI / 4,
+      0,
+      Math.PI * 2,
+    );
     ctx.fill();
 
     ctx.restore();
@@ -81,7 +90,14 @@ window.Babak1 = (function () {
   function drawBasket(ctx, px, py, isCurrentZona, glowColor) {
     // Ground glow
     const glowRadius = TILE * 0.85 + Math.sin(performance.now() / 120) * 1.5;
-    const grad = ctx.createRadialGradient(px, py + TILE * 0.15, 2, px, py + TILE * 0.15, glowRadius);
+    const grad = ctx.createRadialGradient(
+      px,
+      py + TILE * 0.15,
+      2,
+      px,
+      py + TILE * 0.15,
+      glowRadius,
+    );
     grad.addColorStop(0, isCurrentZona ? glowColor : "rgba(255,255,255,0.1)");
     grad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = grad;
@@ -95,7 +111,7 @@ window.Babak1 = (function () {
     // --- Rocket body ---
     ctx.fillStyle = "#dce8f5";
     ctx.beginPath();
-    ctx.moveTo(0, -14);         // nose tip
+    ctx.moveTo(0, -14); // nose tip
     ctx.bezierCurveTo(6, -8, 7, 0, 7, 8);
     ctx.lineTo(-7, 8);
     ctx.bezierCurveTo(-7, 0, -6, -8, 0, -14);
@@ -166,7 +182,6 @@ window.Babak1 = (function () {
     { indo: "Umpan Balik", inggris: "Feedback" },
     { indo: "Tantangan", inggris: "Challenge" },
     { indo: "Dukungan", inggris: "Support" },
-    { indo: "Dampak", inggris: "Impact" },
     { indo: "Strategi", inggris: "Strategy" },
     { indo: "Inovasi", inggris: "Innovation" },
     { indo: "Kolaborasi", inggris: "Collaboration" },
@@ -287,12 +302,18 @@ window.Babak1 = (function () {
 
   // Acak penempatan kata Inggris ke tiap lubang — dipanggil ulang tiap init()
   function shuffleLubangWords() {
-    const words = PASANGAN.map(function (p) { return p.inggris; });
+    const words = PASANGAN.map(function (p) {
+      return p.inggris;
+    });
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      const tmp = words[i]; words[i] = words[j]; words[j] = tmp;
+      const tmp = words[i];
+      words[i] = words[j];
+      words[j] = tmp;
     }
-    ZONA.forEach(function (z, i) { z.inggris = words[i]; });
+    ZONA.forEach(function (z, i) {
+      z.inggris = words[i];
+    });
   }
 
   let bolaList = [];
@@ -342,7 +363,7 @@ window.Babak1 = (function () {
       if (target) {
         target.taken = true;
         carrying = target;
-        if (window.AudioEngine) window.AudioEngine.play('pickup');
+        if (window.AudioEngine) window.AudioEngine.play("pickup");
       }
     }
     currentZona = findZonaAt(col, row);
@@ -378,7 +399,7 @@ window.Babak1 = (function () {
       const isCurrentZona = currentZona === z;
       const px = z.col * TILE + TILE / 2;
       const py = z.row * TILE + TILE / 2;
-      
+
       drawBasket(ctx, px, py, isCurrentZona, "rgba(240, 138, 60, 0.45)");
 
       // label kata Inggris -- hanya ditonjolkan saat player berdiri di lubang ini
@@ -397,7 +418,7 @@ window.Babak1 = (function () {
       const px = b.col * TILE + TILE / 2;
       const py = b.row * TILE + TILE / 2;
       const size = 16 + Math.sin(performance.now() / 220) * 2; // Pulsing size
-      
+
       drawFruit(ctx, px, py, size, "orange");
 
       ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
@@ -412,30 +433,32 @@ window.Babak1 = (function () {
 
   function drawCarried(ctx, playerX, playerY) {
     if (!carrying) return;
-    
+
     // Determine animation movement state
-    const player = window.PlayerModule ? window.PlayerModule.self : { isMoving: false };
+    const player = window.PlayerModule
+      ? window.PlayerModule.self
+      : { isMoving: false };
     const isMoving = player.isMoving || false;
-    
+
     // Cute carried item bobbing animation (faster bounce when moving, gentle float when idle)
     const bobPeriod = isMoving ? 120 : 220;
     const bob = Math.sin(performance.now() / bobPeriod) * 1.6;
-    
+
     // Position fruit to float cleanly above the head with a distinct gap (not touching the head)
     const ox = playerX;
-    const oy = playerY - 24 + bob; 
+    const oy = playerY - 24 + bob;
     const size = 15; // cute, visible size
-    
+
     ctx.save();
-    
+
     // Soft shadow below the fruit
     ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 2;
-    
+
     drawFruit(ctx, ox, oy, size, "orange");
     ctx.restore();
-    
+
     // Word label floats cleanly above the speech bubble with outline for visibility
     ctx.font = "bold 9px 'Trebuchet MS', sans-serif";
     ctx.textAlign = "center";
