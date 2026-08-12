@@ -286,15 +286,22 @@ window.Babak3 = (function () {
     return null;
   }
 
+  let lastCheckedTile = null; // tambahin di scope atas, deket `active`
+
   function onPlayerMove(col, row) {
     if (!active) return;
 
     if (window.Maze.grid[row][col] === 4) {
-      // Door
       const doorIndex = doorCols.indexOf(col);
-      if (doorIndex !== -1) {
-        checkAnswer(doorIndex);
-      }
+      if (doorIndex === -1) return;
+
+      const tileKey = col + "," + row;
+      if (lastCheckedTile === tileKey) return; // udah diproses, skip
+      lastCheckedTile = tileKey;
+
+      checkAnswer(doorIndex);
+    } else {
+      lastCheckedTile = null; // player udah keluar dari tile pintu
     }
   }
 
@@ -473,6 +480,17 @@ window.Babak3 = (function () {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("👻", ghost.x, ghost.y);
+  }
+
+  function resetLevel() {
+    window.PlayerModule.teleport(1, 1);
+    window.PlayerModule.setQueuedDir(null);
+
+    ghost.x = 10 * window.Maze.TILE + window.Maze.TILE / 2;
+    ghost.y = 1 * window.Maze.TILE + window.Maze.TILE / 2;
+    ghost.targetTile = null;
+
+    lastCheckedTile = null; // <-- tambahin ini
   }
 
   return {
