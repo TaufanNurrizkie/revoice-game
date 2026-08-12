@@ -207,13 +207,22 @@ window.Babak3 = (function () {
     },
   ];
 
-  // Ambil 5 soal acak dan acak posisi jawaban benar tiap soal
+  function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Ambil n soal acak dan acak posisi jawaban benar tiap soal
   function pickQuestions(pool, n) {
-    const picked = [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+    const picked = shuffleArray(pool).slice(0, n);
     return picked.map((q) => {
       // Acak posisi jawaban benar di antara 4 opsi
       const correctAnswer = q.options[q.correctIndex];
-      const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+      const shuffled = shuffleArray(q.options);
       return {
         word: q.word,
         options: shuffled,
@@ -250,6 +259,7 @@ window.Babak3 = (function () {
   let active = false;
   let onAllSubmittedCallback = null;
   let onSubmitResultCallback = null;
+  let lastCheckedTile = null;
 
   // Ghost state
   let ghost = {
@@ -277,6 +287,8 @@ window.Babak3 = (function () {
     ghost.x = 10 * window.Maze.TILE + window.Maze.TILE / 2;
     ghost.y = 1 * window.Maze.TILE + window.Maze.TILE / 2;
     ghost.targetTile = null;
+
+    lastCheckedTile = null;
   }
 
   function getCurrentQuestion() {
@@ -285,8 +297,6 @@ window.Babak3 = (function () {
     }
     return null;
   }
-
-  let lastCheckedTile = null; // tambahin di scope atas, deket `active`
 
   function onPlayerMove(col, row) {
     if (!active) return;
@@ -307,27 +317,38 @@ window.Babak3 = (function () {
 
   function checkAnswer(doorIndex) {
     const q = questions[currentQuestionIndex];
-    const isCorrect = doorIndex === q.correctIndex;
+    if (!q) return;
 
-    if (onSubmitResultCallback) {
-      onSubmitResultCallback(isCorrect, {
-        indo: q.options[doorIndex],
-        inggris: q.word,
-      });
-    }
+    const isCorrect = doorIndex === q.correctIndex;
+    const answeredInfo = {
+      indo: q.options[doorIndex],
+      inggris: q.word,
+    };
 
     if (isCorrect) {
       currentQuestionIndex++;
-      if (currentQuestionIndex >= questions.length) {
+      const finished = currentQuestionIndex >= questions.length;
+      if (finished) {
         active = false;
-        if (onAllSubmittedCallback) onAllSubmittedCallback();
       } else {
         resetLevel();
+      }
+
+      if (onSubmitResultCallback) {
+        onSubmitResultCallback(true, answeredInfo, false);
+      }
+
+      if (finished && onAllSubmittedCallback) {
+        onAllSubmittedCallback();
       }
     } else {
       // Salah: ganti soal saat ini dengan soal baru dari pool, lalu reset posisi
       replaceCurrentQuestion();
       resetLevel();
+
+      if (onSubmitResultCallback) {
+        onSubmitResultCallback(false, answeredInfo, false);
+      }
     }
   }
 
@@ -338,7 +359,7 @@ window.Babak3 = (function () {
     const pool = available.length > 0 ? available : questionPool;
     const raw = pool[Math.floor(Math.random() * pool.length)];
     const correctAnswer = raw.options[raw.correctIndex];
-    const shuffled = [...raw.options].sort(() => Math.random() - 0.5);
+    const shuffled = shuffleArray(raw.options);
     questions[currentQuestionIndex] = {
       word: raw.word,
       options: shuffled,
@@ -480,17 +501,6 @@ window.Babak3 = (function () {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("👻", ghost.x, ghost.y);
-  }
-
-  function resetLevel() {
-    window.PlayerModule.teleport(1, 1);
-    window.PlayerModule.setQueuedDir(null);
-
-    ghost.x = 10 * window.Maze.TILE + window.Maze.TILE / 2;
-    ghost.y = 1 * window.Maze.TILE + window.Maze.TILE / 2;
-    ghost.targetTile = null;
-
-    lastCheckedTile = null; // <-- tambahin ini
   }
 
   return {

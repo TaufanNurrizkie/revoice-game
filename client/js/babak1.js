@@ -263,10 +263,18 @@ window.Babak1 = (function () {
     { indo: "Kebijaksanaan", inggris: "Wisdom" },
   ];
 
+  function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   // Ambil 5 soal acak dari pool
   function pickRandom(pool, n) {
-    const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, n);
+    return shuffleArray(pool).slice(0, n);
   }
 
   let PASANGAN = pickRandom(PASANGAN_POOL, 5);

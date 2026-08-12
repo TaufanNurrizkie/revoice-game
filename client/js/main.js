@@ -305,10 +305,10 @@
         } else {
           window.AudioEngine.play('wrong');
           banner.innerHTML = 'Salah pintu! Soal berganti, coba lagi!';
+          loseHeart();
         }
         banner.style.color = "#d9534f";
         updateBabak3Question();
-        loseHeart();
       }
 
       sendJawaban(3, bola.indo, bola.inggris, cocok);

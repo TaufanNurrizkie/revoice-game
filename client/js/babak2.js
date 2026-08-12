@@ -360,9 +360,18 @@ window.Babak2 = (function () {
     },
   ];
 
+  function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   // Ambil 10 soal acak dari pool
   function pickRandom(pool, n) {
-    return [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+    return shuffleArray(pool).slice(0, n);
   }
 
   // Acak urutan soal
